@@ -3,7 +3,7 @@ import Testing
 @testable import HideNotchCore
 
 struct BarGeometryTests {
-    // 实测值：1800x1169，菜单栏 39pt，刘海 38pt
+    // Measured display: 1800x1169, 39-point menu bar, 38-point notch.
     @Test func notchedScreenCoversMenuBar() {
         let m = ScreenMetrics(
             frame: CGRect(x: 0, y: 0, width: 1800, height: 1169),
@@ -29,7 +29,7 @@ struct BarGeometryTests {
     }
 
     @Test func dockDoesNotAffectBar() {
-        // Dock 在底部（原点上移）且在左侧（宽度变窄）
+        // Dock at the bottom shifts the origin; Dock on the left reduces the width.
         let m = ScreenMetrics(
             frame: CGRect(x: 0, y: 0, width: 1800, height: 1169),
             visibleFrame: CGRect(x: 70, y: 80, width: 1730, height: 1050),

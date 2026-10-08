@@ -5,7 +5,7 @@ import Testing
 @MainActor
 struct BarWindowTests {
     @Test func keepsRequestedFrameOverMenuBar() {
-        // 回归：AppKit 默认会把窗口挪到菜单栏下方，压住应用标题栏
+        // AppKit must not move the overlay below the menu bar onto app title bars.
         let window = BarWindow()
         let rect = NSRect(x: 0, y: 1130, width: 1800, height: 39)
         #expect(window.constrainFrameRect(rect, to: NSScreen.main) == rect)
@@ -26,7 +26,7 @@ struct BarWindowTests {
     }
 
     @Test func cannotBeHiddenByHideOthers() {
-        // 回归：其他应用 Cmd-Opt-H「隐藏其他」不应把黑条一并隐藏
+        // Other apps’ Hide Others command must not hide the overlay.
         #expect(!BarWindow().canHide)
     }
 

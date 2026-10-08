@@ -2,7 +2,7 @@ import Foundation
 
 /// User-facing strings, localized via Resources/<lang>.lproj/Localizable.strings.
 public enum L10n {
-    static let supportedLanguages = ["en", "zh-Hans", "zh-Hant", "ja", "ko", "fr", "de", "es", "it", "pt", "th", "vi", "id"]
+    static let supportedLanguages = ["en", "ja", "ko", "fr", "de", "es", "it", "pt", "th", "vi", "id"]
     static let keys = [
         "menu.hideNotch", "menu.launchAtLogin", "menu.launchAtLogin.failed",
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit",

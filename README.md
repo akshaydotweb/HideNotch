@@ -1,5 +1,3 @@
-[简体中文](README.zh-CN.md)
-
 # HideNotch
 
 A macOS menu-bar utility that paints the menu bar area on notched screens pure black, so the notch blends in with the menu bar. It also adds black corners with a 16-point radius around the desktop, with the upper corners directly below the menu bar.
@@ -26,7 +24,7 @@ Click the menu-bar icon to see the following menu items:
 
 ## Languages
 
-The interface is localized into 13 languages: English (default/fallback), Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, Spanish, Italian, Portuguese, Thai, Vietnamese, and Indonesian. Translations are machine-assisted; corrections are welcome via issues/PRs.
+The interface is localized into 11 languages: English (default/fallback), Japanese, Korean, French, German, Spanish, Italian, Portuguese, Thai, Vietnamese, and Indonesian. Translations are machine-assisted; corrections are welcome via issues/PRs.
 
 ## Known Limitations
 

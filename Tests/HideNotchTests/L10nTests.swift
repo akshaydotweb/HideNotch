@@ -23,20 +23,6 @@ struct L10nTests {
         }
     }
 
-    @Test func simplifiedChineseMatchesOriginalStrings() throws {
-        let lprojPath = try #require(Bundle.module.path(forResource: "zh-Hans", ofType: "lproj"))
-        let bundle = try #require(Bundle(path: lprojPath))
-        #expect(L10n.tr("menu.hideNotch", bundle: bundle) == "隐藏刘海")
-        #expect(L10n.tr("menu.launchAtLogin", bundle: bundle) == "开机自启")
-        #expect(L10n.tr("menu.launchAtLogin.failed", bundle: bundle) == "开机自启（失败）")
-        #expect(L10n.tr("menu.launchAtLogin.needsApproval", bundle: bundle) == "开机自启（需在系统设置中批准）")
-        #expect(L10n.tr("menu.quit", bundle: bundle) == "退出")
-        #expect(L10n.tr("alert.enable.title", bundle: bundle) == "隐藏刘海")
-        #expect(L10n.tr("alert.enable.message", bundle: bundle) == "将把带刘海屏幕的菜单栏背景变成黑色，与刘海融为一体。")
-        #expect(L10n.tr("alert.enable.confirm", bundle: bundle) == "开启")
-        #expect(L10n.tr("alert.enable.cancel", bundle: bundle) == "取消")
-    }
-
     @Test func englishStrings() throws {
         let lprojPath = try #require(Bundle.module.path(forResource: "en", ofType: "lproj"))
         let bundle = try #require(Bundle(path: lprojPath))

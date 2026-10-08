@@ -126,7 +126,7 @@ struct StatusItemControllerTests {
 
     @Test func menuWillOpenResyncsExternalChanges() {
         let (sut, _, _) = makeSUT()
-        login.state = .enabled  // 用户在系统设置里改了登录项
+        login.state = .enabled  // The user changed the login item in System Settings.
         sut.menuWillOpen(sut.menu)
         #expect(sut.loginMenuItem.state == .on)
     }
