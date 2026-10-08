@@ -25,8 +25,38 @@ struct StatusItemControllerTests {
 
     @Test func menuHasToggleLoginAndQuit() {
         let (sut, _, _) = makeSUT()
-        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.launchAtLogin, "", L10n.quit])
-        #expect(sut.menu.items[2].isSeparatorItem)
+        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.launchAtLogin, L10n.showMenuBarIcon, "", L10n.quit])
+        #expect(sut.menu.items[3].isSeparatorItem)
+    }
+
+    @Test func hidingIconKeepsOverlayEnabledAndReopeningRestoresAccess() {
+        let (sut, prefs, overlay) = makeSUT()
+        sut.install()
+        defer {
+            if let item = sut.statusItem { NSStatusBar.system.removeStatusItem(item) }
+        }
+        #expect(sut.statusItem?.isVisible == true)
+        sut.toggleMenuBarIcon()
+        #expect(!prefs.showMenuBarIcon)
+        #expect(sut.statusItem?.isVisible == false)
+        #expect(sut.iconMenuItem.state == .off)
+        #expect(overlay.isEnabled)
+
+        sut.restoreMenuBarIcon()
+        #expect(prefs.showMenuBarIcon)
+        #expect(sut.statusItem?.isVisible == true)
+        #expect(sut.iconMenuItem.state == .on)
+    }
+
+    @Test func installingHonorsHiddenIconPreference() {
+        let (sut, prefs, _) = makeSUT()
+        prefs.showMenuBarIcon = false
+        sut.install()
+        defer {
+            if let item = sut.statusItem { NSStatusBar.system.removeStatusItem(item) }
+        }
+        #expect(sut.statusItem?.isVisible == false)
+        #expect(sut.iconMenuItem.state == .off)
     }
 
     @Test func menuReflectsDisabledPreference() {

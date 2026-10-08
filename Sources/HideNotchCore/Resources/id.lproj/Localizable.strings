@@ -7,3 +7,4 @@
 "alert.enable.message" = "Latar bilah menu pada layar yang memiliki notch akan berubah menjadi hitam agar menyatu dengan notch.";
 "alert.enable.confirm" = "Aktifkan";
 "alert.enable.cancel" = "Batal";
+"menu.showMenuBarIcon" = "Tampilkan Ikon Bilah Menu";

@@ -7,3 +7,4 @@
 "alert.enable.message" = "The menu bar background on screens with a notch will turn black so it blends in with the notch.";
 "alert.enable.confirm" = "Turn On";
 "alert.enable.cancel" = "Cancel";
+"menu.showMenuBarIcon" = "Show Menu Bar Icon";

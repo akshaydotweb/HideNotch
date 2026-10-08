@@ -7,3 +7,4 @@
 "alert.enable.message" = "L'arrière-plan de la barre des menus des écrans à encoche deviendra noir pour se fondre avec l'encoche.";
 "alert.enable.confirm" = "Activer";
 "alert.enable.cancel" = "Annuler";
+"menu.showMenuBarIcon" = "Afficher l’icône dans la barre des menus";

@@ -7,3 +7,4 @@
 "alert.enable.message" = "พื้นหลังของแถบเมนูบนหน้าจอที่มีรอยบากจะเปลี่ยนเป็นสีดำ เพื่อให้กลืนไปกับรอยบาก";
 "alert.enable.confirm" = "เปิด";
 "alert.enable.cancel" = "ยกเลิก";
+"menu.showMenuBarIcon" = "แสดงไอคอนในแถบเมนู";

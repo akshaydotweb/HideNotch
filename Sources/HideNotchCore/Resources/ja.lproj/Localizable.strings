@@ -7,3 +7,4 @@
 "alert.enable.message" = "ノッチのある画面のメニューバー背景を黒にして、ノッチと一体化させます。";
 "alert.enable.confirm" = "オンにする";
 "alert.enable.cancel" = "キャンセル";
+"menu.showMenuBarIcon" = "メニューバーアイコンを表示";

@@ -32,6 +32,11 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
     }
 
+    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        statusController?.restoreMenuBarIcon()
+        return false
+    }
+
     @objc private func layoutChanged(_ notification: Notification) {
         overlay.refresh()
         // Screens may not have settled yet (e.g. right after wake); refresh again shortly after.

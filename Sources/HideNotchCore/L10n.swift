@@ -5,7 +5,7 @@ public enum L10n {
     static let supportedLanguages = ["en", "zh-Hans", "zh-Hant", "ja", "ko", "fr", "de", "es", "it", "pt", "th", "vi", "id"]
     static let keys = [
         "menu.hideNotch", "menu.launchAtLogin", "menu.launchAtLogin.failed",
-        "menu.launchAtLogin.needsApproval", "menu.quit",
+        "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit",
         "alert.enable.title", "alert.enable.message", "alert.enable.confirm", "alert.enable.cancel",
     ]
 
@@ -14,6 +14,7 @@ public enum L10n {
     static var launchAtLoginFailed: String { tr("menu.launchAtLogin.failed") }
     static var launchAtLoginNeedsApproval: String { tr("menu.launchAtLogin.needsApproval") }
     static var quit: String { tr("menu.quit") }
+    static var showMenuBarIcon: String { tr("menu.showMenuBarIcon") }
     static var enableAlertTitle: String { tr("alert.enable.title") }
     static var enableAlertMessage: String { tr("alert.enable.message") }
     static var enableAlertConfirm: String { tr("alert.enable.confirm") }

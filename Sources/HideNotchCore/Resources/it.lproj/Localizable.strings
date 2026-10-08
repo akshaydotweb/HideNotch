@@ -7,3 +7,4 @@
 "alert.enable.message" = "Lo sfondo della barra dei menu degli schermi con notch diventerà nero per fondersi con il notch.";
 "alert.enable.confirm" = "Attiva";
 "alert.enable.cancel" = "Annulla";
+"menu.showMenuBarIcon" = "Mostra icona nella barra dei menu";

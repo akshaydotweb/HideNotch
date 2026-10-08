@@ -15,6 +15,15 @@ struct PreferencesTests {
         #expect(Preferences(defaults: makeDefaults()).overlayEnabled)
     }
 
+    @Test func menuBarIconIsShownByDefaultAndHiddenPreferencePersists() {
+        let defaults = makeDefaults()
+        let preferences = Preferences(defaults: defaults)
+        #expect(preferences.showMenuBarIcon)
+        preferences.showMenuBarIcon = false
+        #expect(!Preferences(defaults: defaults).showMenuBarIcon)
+        defaults.removePersistentDomain(forName: suite)
+    }
+
     @Test func overlayEnabledPersists() {
         let defaults = makeDefaults()
         Preferences(defaults: defaults).overlayEnabled = false

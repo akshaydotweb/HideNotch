@@ -9,12 +9,13 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     private let overlay: OverlayController
     private let loginItem: LoginItemControlling
     private let confirmEnable: @MainActor () -> Bool
-    private var statusItem: NSStatusItem?
+    private(set) var statusItem: NSStatusItem?
     private var loginItemFailed = false
 
     let menu = NSMenu()
     let overlayItem = NSMenuItem(title: L10n.hideNotch, action: #selector(toggleOverlay), keyEquivalent: "")
     let loginMenuItem = NSMenuItem(title: L10n.launchAtLogin, action: #selector(toggleLoginItem), keyEquivalent: "")
+    let iconMenuItem = NSMenuItem(title: L10n.showMenuBarIcon, action: #selector(toggleMenuBarIcon), keyEquivalent: "")
 
     public init(
         preferences: Preferences, overlay: OverlayController, loginItem: LoginItemControlling,
@@ -27,11 +28,12 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         super.init()
 
         let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
-        for item in [overlayItem, loginMenuItem, quitItem] {
+        for item in [overlayItem, loginMenuItem, iconMenuItem, quitItem] {
             item.target = self
         }
         menu.addItem(overlayItem)
         menu.addItem(loginMenuItem)
+        menu.addItem(iconMenuItem)
         menu.addItem(.separator())
         menu.addItem(quitItem)
         menu.delegate = self
@@ -43,6 +45,18 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         item.button?.image = NotchIcon.menuBarImage()
         item.menu = menu
         statusItem = item
+        syncMenuState()
+    }
+
+    @objc func toggleMenuBarIcon() {
+        preferences.showMenuBarIcon.toggle()
+        syncMenuState()
+    }
+
+    /// Reopening the running app restores access to its controls.
+    public func restoreMenuBarIcon() {
+        preferences.showMenuBarIcon = true
+        syncMenuState()
     }
 
     public func menuWillOpen(_ menu: NSMenu) {
@@ -92,6 +106,8 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func syncMenuState() {
+        iconMenuItem.state = preferences.showMenuBarIcon ? .on : .off
+        statusItem?.isVisible = preferences.showMenuBarIcon
         overlayItem.state = preferences.overlayEnabled ? .on : .off
         loginMenuItem.state = loginItem.state == .enabled ? .on : .off
         if loginItemFailed {

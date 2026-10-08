@@ -7,3 +7,4 @@
 "alert.enable.message" = "將把有瀏海螢幕的選單列背景變成黑色，與瀏海融為一體。";
 "alert.enable.confirm" = "開啟";
 "alert.enable.cancel" = "取消";
+"menu.showMenuBarIcon" = "顯示選單列圖示";

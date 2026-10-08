@@ -7,3 +7,4 @@
 "alert.enable.message" = "Nền thanh menu trên màn hình có tai thỏ sẽ chuyển sang màu đen để hòa vào tai thỏ.";
 "alert.enable.confirm" = "Bật";
 "alert.enable.cancel" = "Hủy";
+"menu.showMenuBarIcon" = "Hiện biểu tượng trên thanh menu";

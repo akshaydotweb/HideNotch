@@ -7,3 +7,4 @@
 "alert.enable.message" = "将把带刘海屏幕的菜单栏背景变成黑色，与刘海融为一体。";
 "alert.enable.confirm" = "开启";
 "alert.enable.cancel" = "取消";
+"menu.showMenuBarIcon" = "显示菜单栏图标";
