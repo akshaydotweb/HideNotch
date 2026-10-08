@@ -4,12 +4,13 @@ import Foundation
 public enum L10n {
     static let supportedLanguages = ["en", "ja", "ko", "fr", "de", "es", "it", "pt", "th", "vi", "id"]
     static let keys = [
-        "menu.hideNotch", "menu.launchAtLogin", "menu.launchAtLogin.failed",
+        "menu.hideNotch", "menu.roundedScreenCorners", "menu.launchAtLogin", "menu.launchAtLogin.failed",
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit",
         "alert.enable.title", "alert.enable.message", "alert.enable.confirm", "alert.enable.cancel",
     ]
 
     static var hideNotch: String { tr("menu.hideNotch") }
+    static var roundedScreenCorners: String { tr("menu.roundedScreenCorners") }
     static var launchAtLogin: String { tr("menu.launchAtLogin") }
     static var launchAtLoginFailed: String { tr("menu.launchAtLogin.failed") }
     static var launchAtLoginNeedsApproval: String { tr("menu.launchAtLogin.needsApproval") }

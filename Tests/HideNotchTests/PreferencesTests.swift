@@ -11,6 +11,15 @@ struct PreferencesTests {
         return defaults
     }
 
+    @Test func roundedCornersAreEnabledByDefaultAndPreferencePersists() {
+        let defaults = makeDefaults()
+        let preferences = Preferences(defaults: defaults)
+        #expect(preferences.roundedCornersEnabled)
+        preferences.roundedCornersEnabled = false
+        #expect(!Preferences(defaults: defaults).roundedCornersEnabled)
+        defaults.removePersistentDomain(forName: suite)
+    }
+
     @Test func overlayEnabledDefaultsToTrue() {
         #expect(Preferences(defaults: makeDefaults()).overlayEnabled)
     }

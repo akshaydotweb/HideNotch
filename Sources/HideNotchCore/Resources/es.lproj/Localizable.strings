@@ -8,3 +8,4 @@
 "alert.enable.confirm" = "Activar";
 "alert.enable.cancel" = "Cancelar";
 "menu.showMenuBarIcon" = "Mostrar icono en la barra de menús";
+"menu.roundedScreenCorners" = "Esquinas redondeadas de la pantalla";

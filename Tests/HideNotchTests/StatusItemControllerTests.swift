@@ -25,8 +25,33 @@ struct StatusItemControllerTests {
 
     @Test func menuHasToggleLoginAndQuit() {
         let (sut, _, _) = makeSUT()
-        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.launchAtLogin, L10n.showMenuBarIcon, "", L10n.quit])
-        #expect(sut.menu.items[3].isSeparatorItem)
+        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.roundedScreenCorners, L10n.launchAtLogin, L10n.showMenuBarIcon, "", L10n.quit])
+        #expect(sut.menu.items[4].isSeparatorItem)
+    }
+
+    @Test(arguments: [true, false])
+    func togglingCornersUpdatesPreferenceAndOverlayWithoutEnablingIt(overlayEnabled: Bool) {
+        let (sut, prefs, overlay) = makeSUT(overlayEnabled: overlayEnabled)
+        sut.toggleRoundedCorners()
+        #expect(!prefs.roundedCornersEnabled)
+        #expect(!overlay.roundedCornersEnabled)
+        #expect(overlay.isEnabled == overlayEnabled)
+        #expect(sut.cornersMenuItem.state == .off)
+        if overlayEnabled {
+            #expect(factory.made.count == 1)
+            #expect(!factory.made[0].roundedCornersEnabled)
+            #expect(factory.made[0].isShown)
+        } else {
+            #expect(factory.made.isEmpty)
+        }
+        sut.toggleRoundedCorners()
+        #expect(prefs.roundedCornersEnabled)
+        #expect(overlay.roundedCornersEnabled)
+        #expect(sut.cornersMenuItem.state == .on)
+        if overlayEnabled {
+            #expect(factory.made.count == 1)
+            #expect(factory.made[0].roundedCornersEnabled)
+        }
     }
 
     @Test func hidingIconKeepsOverlayEnabledAndReopeningRestoresAccess() {

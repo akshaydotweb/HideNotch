@@ -26,6 +26,10 @@ public final class OverlayController {
         didSet { refresh() }
     }
 
+    public var roundedCornersEnabled = true {
+        didSet { refresh() }
+    }
+
     public init(screens: ScreenProviding, makeWindow: @escaping @MainActor () -> BarWindowHosting) {
         self.screens = screens
         self.makeWindow = makeWindow
@@ -43,7 +47,8 @@ public final class OverlayController {
             windows.append(makeWindow())
         }
         for (window, layout) in zip(windows, layouts) {
-            window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight)
+            window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight,
+                        roundedCornersEnabled: roundedCornersEnabled)
         }
     }
 }

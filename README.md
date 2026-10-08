@@ -18,6 +18,7 @@ A macOS menu-bar utility that paints the menu bar area on notched screens pure b
 Click the menu-bar icon to see the following menu items:
 
 - **Hide Notch**: toggles the black bar overlay. The checkmark reflects whether it's currently active. Turning it on shows a confirmation prompt first; turning it off, and app launch (including launch at login), do not prompt.
+- **Rounded Screen Corners**: toggles the 16-point black corner masks below the menu bar and at the bottom of the screen. Enabled by default; the setting persists across restarts. The corners appear when Hide Notch is active.
 - **Launch at Login**: when checked, the app starts automatically at login. If the system requires approval in System Settings, the menu shows "Launch at Login (Approve in System Settings)"; clicking it again opens the corresponding System Settings page.
 - **Show Menu Bar Icon**: uncheck to hide the icon while keeping the overlay active. Open HideNotch again from Applications, Spotlight, or `open ~/Applications/HideNotch.app` to restore the icon and access the menu. The setting persists across restarts and launch at login.
 - **Quit**: quits the app.

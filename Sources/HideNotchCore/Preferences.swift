@@ -3,12 +3,17 @@ import Foundation
 public final class Preferences {
     static let overlayEnabledKey = "overlayEnabled"
     static let showMenuBarIconKey = "showMenuBarIcon"
+    static let roundedCornersEnabledKey = "roundedCornersEnabled"
 
     private let defaults: UserDefaults
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        defaults.register(defaults: [Self.overlayEnabledKey: true, Self.showMenuBarIconKey: true])
+        defaults.register(defaults: [
+            Self.overlayEnabledKey: true,
+            Self.showMenuBarIconKey: true,
+            Self.roundedCornersEnabledKey: true,
+        ])
     }
 
     public var overlayEnabled: Bool {
@@ -19,5 +24,10 @@ public final class Preferences {
     public var showMenuBarIcon: Bool {
         get { defaults.bool(forKey: Self.showMenuBarIconKey) }
         set { defaults.set(newValue, forKey: Self.showMenuBarIconKey) }
+    }
+
+    public var roundedCornersEnabled: Bool {
+        get { defaults.bool(forKey: Self.roundedCornersEnabledKey) }
+        set { defaults.set(newValue, forKey: Self.roundedCornersEnabledKey) }
     }
 }

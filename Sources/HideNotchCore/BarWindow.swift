@@ -3,7 +3,7 @@ import AppKit
 @MainActor
 public protocol BarWindowHosting: AnyObject {
     var frame: CGRect { get }
-    func show(at rect: CGRect, menuBarHeight: CGFloat)
+    func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool)
     func hide()
 }
 
@@ -31,8 +31,9 @@ public final class BarWindow: NSWindow, BarWindowHosting {
         frameRect
     }
 
-    public func show(at rect: CGRect, menuBarHeight: CGFloat) {
+    public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true) {
         (contentView as? ScreenMaskView)?.menuBarHeight = menuBarHeight
+        (contentView as? ScreenMaskView)?.roundedCornersEnabled = roundedCornersEnabled
         setFrame(rect, display: true)
         orderFrontRegardless()
     }
@@ -45,6 +46,10 @@ public final class BarWindow: NSWindow, BarWindowHosting {
 /// Paints the menu bar and the area outside the rounded desktop black.
 final class ScreenMaskView: NSView {
     static let cornerRadius: CGFloat = 16
+
+    var roundedCornersEnabled = true {
+        didSet { needsDisplay = true }
+    }
 
     var menuBarHeight: CGFloat = 0 {
         didSet { needsDisplay = true }
@@ -59,7 +64,8 @@ final class ScreenMaskView: NSView {
             width: bounds.width, height: max(0, bounds.height - menuBarHeight))
         let mask = CGMutablePath()
         mask.addRect(bounds)
-        mask.addRoundedRect(in: desktop, cornerWidth: Self.cornerRadius, cornerHeight: Self.cornerRadius)
+        let radius = roundedCornersEnabled ? Self.cornerRadius : 0
+        mask.addRoundedRect(in: desktop, cornerWidth: radius, cornerHeight: radius)
         context.addPath(mask)
         context.setFillColor(NSColor.black.cgColor)
         context.drawPath(using: .eoFill)

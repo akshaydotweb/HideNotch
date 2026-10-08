@@ -12,9 +12,11 @@ final class FakeWindow: BarWindowHosting {
     var frame: CGRect = .zero
     var isShown = false
     var menuBarHeight: CGFloat = 0
-    func show(at rect: CGRect, menuBarHeight: CGFloat) {
+    var roundedCornersEnabled = true
+    func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool) {
         frame = rect
         self.menuBarHeight = menuBarHeight
+        self.roundedCornersEnabled = roundedCornersEnabled
         isShown = true
     }
     func hide() { isShown = false }

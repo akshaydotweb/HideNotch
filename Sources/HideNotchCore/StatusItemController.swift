@@ -14,6 +14,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
 
     let menu = NSMenu()
     let overlayItem = NSMenuItem(title: L10n.hideNotch, action: #selector(toggleOverlay), keyEquivalent: "")
+    let cornersMenuItem = NSMenuItem(title: L10n.roundedScreenCorners, action: #selector(toggleRoundedCorners), keyEquivalent: "")
     let loginMenuItem = NSMenuItem(title: L10n.launchAtLogin, action: #selector(toggleLoginItem), keyEquivalent: "")
     let iconMenuItem = NSMenuItem(title: L10n.showMenuBarIcon, action: #selector(toggleMenuBarIcon), keyEquivalent: "")
 
@@ -28,10 +29,11 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         super.init()
 
         let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
-        for item in [overlayItem, loginMenuItem, iconMenuItem, quitItem] {
+        for item in [overlayItem, cornersMenuItem, loginMenuItem, iconMenuItem, quitItem] {
             item.target = self
         }
         menu.addItem(overlayItem)
+        menu.addItem(cornersMenuItem)
         menu.addItem(loginMenuItem)
         menu.addItem(iconMenuItem)
         menu.addItem(.separator())
@@ -45,6 +47,12 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         item.button?.image = NotchIcon.menuBarImage()
         item.menu = menu
         statusItem = item
+        syncMenuState()
+    }
+
+    @objc func toggleRoundedCorners() {
+        preferences.roundedCornersEnabled.toggle()
+        overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
         syncMenuState()
     }
 
@@ -106,6 +114,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func syncMenuState() {
+        cornersMenuItem.state = preferences.roundedCornersEnabled ? .on : .off
         iconMenuItem.state = preferences.showMenuBarIcon ? .on : .off
         statusItem?.isVisible = preferences.showMenuBarIcon
         overlayItem.state = preferences.overlayEnabled ? .on : .off

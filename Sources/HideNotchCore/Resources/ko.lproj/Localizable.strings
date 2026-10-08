@@ -8,3 +8,4 @@
 "alert.enable.confirm" = "켜기";
 "alert.enable.cancel" = "취소";
 "menu.showMenuBarIcon" = "메뉴 막대 아이콘 표시";
+"menu.roundedScreenCorners" = "화면 모서리 둥글게";

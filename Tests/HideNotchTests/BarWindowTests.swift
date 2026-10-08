@@ -48,7 +48,8 @@ struct BarWindowTests {
         #expect(!window.isVisible)
     }
 
-    @Test func maskDrawsBlackCornersBelowMenuBarAndLeavesDesktopClear() throws {
+    @Test(arguments: [true, false])
+    func maskKeepsMenuBarBlackAndDrawsCornersOnlyWhenEnabled(roundedCornersEnabled: Bool) throws {
         let context = try #require(CGContext(
             data: nil, width: 100, height: 100, bitsPerComponent: 8, bytesPerRow: 400,
             space: CGColorSpaceCreateDeviceRGB(),
@@ -56,6 +57,7 @@ struct BarWindowTests {
         context.setShouldAntialias(false)
         let view = ScreenMaskView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         view.menuBarHeight = 20
+        view.roundedCornersEnabled = roundedCornersEnabled
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
         view.draw(view.bounds)
@@ -68,15 +70,15 @@ struct BarWindowTests {
 
         #expect(alpha(50, 90) == 255)
         for x in [0, 99] {
-            #expect(alpha(x, 79) == 255)
-            #expect(alpha(x, 0) == 255)
+            #expect(alpha(x, 79) == (roundedCornersEnabled ? 255 : 0))
+            #expect(alpha(x, 0) == (roundedCornersEnabled ? 255 : 0))
             #expect(alpha(x, 40) == 0)
         }
         #expect(alpha(50, 40) == 0)
         #expect(alpha(16, 79) == 0)
         #expect(alpha(50, 0) == 0)
         // These points straddle the arc of a 16-point bottom-left corner.
-        #expect(alpha(3, 3) == 255)
+        #expect(alpha(3, 3) == (roundedCornersEnabled ? 255 : 0))
         #expect(alpha(7, 7) == 0)
         for channel in 0..<3 {
             #expect(pixels[pixelOffset(50, 90) + channel] == 0)
