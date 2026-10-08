@@ -25,7 +25,8 @@ struct OverlayControllerTests {
         #expect(controller.windows.count == 1)
         #expect(factory.made.count == 1)
         #expect(factory.made[0].isShown)
-        #expect(factory.made[0].frame == CGRect(x: 0, y: 1130, width: 1800, height: 39))
+        #expect(factory.made[0].frame == Screens.notched.frame)
+        #expect(factory.made[0].menuBarHeight == 39)
     }
 
     @Test func refreshWhileDisabledCreatesNothing() {
@@ -46,7 +47,8 @@ struct OverlayControllerTests {
         screens.list = [resized]
         controller.refresh()
         #expect(factory.made.count == 1)
-        #expect(factory.made[0].frame == CGRect(x: 0, y: 945, width: 1512, height: 37))
+        #expect(factory.made[0].frame == resized.frame)
+        #expect(factory.made[0].menuBarHeight == 37)
     }
 
     @Test func refreshRemovesWindowWhenScreenGone() {

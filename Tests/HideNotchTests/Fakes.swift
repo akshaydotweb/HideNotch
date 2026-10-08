@@ -11,7 +11,12 @@ final class FakeScreens: ScreenProviding {
 final class FakeWindow: BarWindowHosting {
     var frame: CGRect = .zero
     var isShown = false
-    func show(at rect: CGRect) { frame = rect; isShown = true }
+    var menuBarHeight: CGFloat = 0
+    func show(at rect: CGRect, menuBarHeight: CGFloat) {
+        frame = rect
+        self.menuBarHeight = menuBarHeight
+        isShown = true
+    }
     func hide() { isShown = false }
 }
 

@@ -15,7 +15,7 @@ public struct SystemScreens: ScreenProviding {
     }
 }
 
-/// Keeps one bar window per notched screen in sync with the current screen layout.
+/// Keeps one screen mask per notched screen in sync with the current screen layout.
 @MainActor
 public final class OverlayController {
     private let screens: ScreenProviding
@@ -32,15 +32,18 @@ public final class OverlayController {
     }
 
     public func refresh() {
-        let rects = isEnabled ? screens.currentScreens().compactMap(BarGeometry.barRect(for:)) : []
-        while windows.count > rects.count {
+        let layouts = isEnabled ? screens.currentScreens().compactMap { screen -> (frame: CGRect, menuBarHeight: CGFloat)? in
+            guard let bar = BarGeometry.barRect(for: screen) else { return nil }
+            return (screen.frame, bar.height)
+        } : []
+        while windows.count > layouts.count {
             windows.removeLast().hide()
         }
-        while windows.count < rects.count {
+        while windows.count < layouts.count {
             windows.append(makeWindow())
         }
-        for (window, rect) in zip(windows, rects) {
-            window.show(at: rect)
+        for (window, layout) in zip(windows, layouts) {
+            window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight)
         }
     }
 }

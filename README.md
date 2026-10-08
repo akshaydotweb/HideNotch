@@ -2,7 +2,7 @@
 
 # HideNotch
 
-A macOS menu-bar utility that paints the menu bar area on notched screens pure black, so the notch blends in with the menu bar.
+A macOS menu-bar utility that paints the menu bar area on notched screens pure black, so the notch blends in with the menu bar. It also adds black corners with a 16-point radius around the desktop, with the upper corners directly below the menu bar.
 
 ## Requirements
 
