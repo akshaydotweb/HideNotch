@@ -33,7 +33,7 @@ public final class BarWindow: NSWindow, BarWindowHosting {
 
     public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true) {
         (contentView as? ScreenMaskView)?.menuBarHeight = menuBarHeight
-        (contentView as? ScreenMaskView)?.roundedCornersEnabled = roundedCornersEnabled
+        (contentView as? ScreenMaskView)?.setRoundedCornersEnabled(roundedCornersEnabled, animated: isVisible)
         setFrame(rect, display: true)
         orderFrontRegardless()
     }
@@ -47,8 +47,26 @@ public final class BarWindow: NSWindow, BarWindowHosting {
 final class ScreenMaskView: NSView {
     static let cornerRadius: CGFloat = 16
 
-    var roundedCornersEnabled = true {
+    private(set) var roundedCornersEnabled = true
+    private(set) var radiusAnimation: CornerRadiusAnimation?
+
+    var displayedCornerRadius: CGFloat = cornerRadius {
         didSet { needsDisplay = true }
+    }
+
+    func setRoundedCornersEnabled(_ enabled: Bool, animated: Bool) {
+        guard enabled != roundedCornersEnabled || !animated else { return }
+        roundedCornersEnabled = enabled
+        radiusAnimation?.stop()
+        radiusAnimation = nil
+        let targetRadius = enabled ? Self.cornerRadius : 0
+        guard animated else {
+            displayedCornerRadius = targetRadius
+            return
+        }
+        let animation = CornerRadiusAnimation(view: self, targetRadius: targetRadius)
+        radiusAnimation = animation
+        animation.start()
     }
 
     var menuBarHeight: CGFloat = 0 {
@@ -64,10 +82,40 @@ final class ScreenMaskView: NSView {
             width: bounds.width, height: max(0, bounds.height - menuBarHeight))
         let mask = CGMutablePath()
         mask.addRect(bounds)
-        let radius = roundedCornersEnabled ? Self.cornerRadius : 0
+        let radius = displayedCornerRadius
         mask.addRoundedRect(in: desktop, cornerWidth: radius, cornerHeight: radius)
         context.addPath(mask)
         context.setFillColor(NSColor.black.cgColor)
         context.drawPath(using: .eoFill)
+    }
+}
+
+final class CornerRadiusAnimation: NSAnimation {
+    private weak var view: ScreenMaskView?
+    private let startRadius: CGFloat
+    private let targetRadius: CGFloat
+
+    @MainActor init(view: ScreenMaskView, targetRadius: CGFloat) {
+        self.view = view
+        self.startRadius = view.displayedCornerRadius
+        self.targetRadius = targetRadius
+        super.init(duration: 0.25, animationCurve: .easeInOut)
+        animationBlockingMode = .nonblocking
+        frameRate = 60
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var currentProgress: NSAnimation.Progress {
+        didSet {
+            // Nonblocking NSAnimation updates run on the main thread.
+            let view = view
+            let radius = startRadius + (targetRadius - startRadius) * CGFloat(currentValue)
+            MainActor.assumeIsolated {
+                view?.displayedCornerRadius = radius
+            }
+        }
     }
 }

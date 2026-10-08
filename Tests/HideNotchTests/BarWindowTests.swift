@@ -48,6 +48,37 @@ struct BarWindowTests {
         #expect(!window.isVisible)
     }
 
+    @Test func radiusAnimationInterpolatesAndReversesWithoutJumping() throws {
+        let view = ScreenMaskView()
+        view.setRoundedCornersEnabled(false, animated: false)
+        #expect(view.displayedCornerRadius == 0)
+
+        view.setRoundedCornersEnabled(true, animated: true)
+        let growing = try #require(view.radiusAnimation)
+        growing.stop()
+        growing.currentProgress = 0.5
+        let intermediateRadius = view.displayedCornerRadius
+        #expect(intermediateRadius > 0)
+        #expect(intermediateRadius < ScreenMaskView.cornerRadius)
+
+        view.setRoundedCornersEnabled(true, animated: true)
+        #expect(view.radiusAnimation === growing)
+        #expect(view.displayedCornerRadius == intermediateRadius)
+
+        view.setRoundedCornersEnabled(false, animated: true)
+        let shrinking = try #require(view.radiusAnimation)
+        shrinking.stop()
+        #expect(view.displayedCornerRadius == intermediateRadius)
+        shrinking.currentProgress = 1
+        #expect(view.displayedCornerRadius == 0)
+
+        view.setRoundedCornersEnabled(true, animated: true)
+        let finishing = try #require(view.radiusAnimation)
+        finishing.stop()
+        finishing.currentProgress = 1
+        #expect(view.displayedCornerRadius == ScreenMaskView.cornerRadius)
+    }
+
     @Test(arguments: [true, false])
     func maskKeepsMenuBarBlackAndDrawsCornersOnlyWhenEnabled(roundedCornersEnabled: Bool) throws {
         let context = try #require(CGContext(
@@ -57,7 +88,7 @@ struct BarWindowTests {
         context.setShouldAntialias(false)
         let view = ScreenMaskView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         view.menuBarHeight = 20
-        view.roundedCornersEnabled = roundedCornersEnabled
+        view.setRoundedCornersEnabled(roundedCornersEnabled, animated: false)
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
         view.draw(view.bounds)
