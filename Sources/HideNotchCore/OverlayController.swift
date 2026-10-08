@@ -21,6 +21,7 @@ public final class OverlayController {
     private let screens: ScreenProviding
     private let makeWindow: @MainActor () -> BarWindowHosting
     private(set) var windows: [BarWindowHosting] = []
+    private(set) var isSuspended = false
 
     public var isEnabled = false {
         didSet { refresh() }
@@ -35,7 +36,21 @@ public final class OverlayController {
         self.makeWindow = makeWindow
     }
 
-    public func refresh() {
+    public func suspend() {
+        guard !isSuspended else { return }
+        isSuspended = true
+        // Keep the windows and preferences, but remove them from the unlock transition.
+        for window in windows { window.hide() }
+    }
+
+    public func resume() {
+        guard isSuspended else { return }
+        isSuspended = false
+        refresh(animated: false)
+    }
+
+    public func refresh(animated: Bool = true) {
+        guard !isSuspended else { return }
         guard isEnabled else {
             hideAll(completion: {})
             return
@@ -52,7 +67,7 @@ public final class OverlayController {
         }
         for (window, layout) in zip(windows, layouts) {
             window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight,
-                        roundedCornersEnabled: roundedCornersEnabled)
+                        roundedCornersEnabled: roundedCornersEnabled, animated: animated)
         }
     }
 

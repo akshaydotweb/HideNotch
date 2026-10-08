@@ -3,7 +3,7 @@ import AppKit
 @MainActor
 public protocol BarWindowHosting: AnyObject {
     var frame: CGRect { get }
-    func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool)
+    func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool, animated: Bool)
     func hide()
     func hide(animated: Bool, completion: @escaping @MainActor () -> Void)
 }
@@ -42,21 +42,24 @@ public final class BarWindow: NSWindow, BarWindowHosting {
         frameRect
     }
 
-    public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true) {
+    public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true,
+                     animated: Bool = true) {
         let wasVisible = isVisible
         let wasHiding = isHiding
         isHiding = false
         hideCompletions.removeAll()
         let mask = contentView as? ScreenMaskView
         mask?.menuBarHeight = menuBarHeight
-        mask?.setRoundedCornersEnabled(roundedCornersEnabled, animated: wasVisible)
-        if !wasVisible {
+        mask?.setRoundedCornersEnabled(roundedCornersEnabled, animated: animated && wasVisible)
+        if !animated {
+            mask?.revealProgress = 1
+        } else if !wasVisible {
             mask?.revealProgress = 0
             mask?.displayedCornerRadius = 0
         }
         setFrame(rect, display: true)
-        orderFrontRegardless()
-        if !wasVisible || wasHiding { mask?.animateReveal() }
+        if !wasVisible { orderFrontRegardless() }
+        if animated && (!wasVisible || wasHiding) { mask?.animateReveal() }
     }
 
     public func hide() {

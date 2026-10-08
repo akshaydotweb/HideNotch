@@ -18,6 +18,36 @@ struct OverlayControllerTests {
         #expect(factory.made.isEmpty)
     }
 
+    @Test func suspendedOverlayIgnoresRefreshAndRestoresWithoutAnimation() {
+        screens.list = [Screens.notched]
+        let controller = makeController()
+        controller.isEnabled = true
+        controller.suspend()
+        #expect(!factory.made[0].isShown)
+        #expect(controller.isEnabled)
+        controller.refresh()
+        controller.roundedCornersEnabled = false
+        #expect(!factory.made[0].isShown)
+        #expect(factory.made.count == 1)
+
+        controller.resume()
+        #expect(factory.made.count == 1)
+        #expect(factory.made[0].isShown)
+        #expect(!factory.made[0].animatedShow)
+        #expect(!factory.made[0].roundedCornersEnabled)
+    }
+
+    @Test func disablingWhileSuspendedDoesNotRestoreOverlay() {
+        screens.list = [Screens.notched]
+        let controller = makeController()
+        controller.isEnabled = true
+        controller.suspend()
+        controller.isEnabled = false
+        controller.resume()
+        #expect(controller.windows.isEmpty)
+        #expect(!factory.made[0].isShown)
+    }
+
     @Test func enablingShowsBarOnNotchedScreenOnly() {
         screens.list = [Screens.notched, Screens.external]
         let controller = makeController()

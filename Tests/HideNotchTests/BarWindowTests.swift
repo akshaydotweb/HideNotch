@@ -80,6 +80,22 @@ struct BarWindowTests {
         #expect(view.displayedCornerRadius == ScreenMaskView.cornerRadius)
     }
 
+    @Test func restoringWindowSkipsRevealAndCompletesInterruptedAnimation() throws {
+        let window = BarWindow()
+        defer { window.hide() }
+        let rect = CGRect(x: 0, y: 0, width: 100, height: 1000)
+        window.show(at: rect, menuBarHeight: 40)
+        let view = try #require(window.contentView as? ScreenMaskView)
+        window.hide()
+        window.show(at: rect, menuBarHeight: 40, animated: false)
+        #expect(window.isVisible)
+        #expect(window.frame == rect)
+        #expect(window.animationBehavior == .none)
+        #expect(view.maskAnimation == nil)
+        #expect(view.revealProgress == 1)
+        #expect(view.displayedCornerRadius == ScreenMaskView.cornerRadius)
+    }
+
     @Test func openingRevealsMaskFromTopWithoutMovingWindowOrRestartingOnRefresh() throws {
         let window = BarWindow()
         defer { window.hide() }

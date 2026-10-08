@@ -31,6 +31,18 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         workspace.addObserver(
             self, selector: #selector(layoutChanged),
             name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
+        workspace.addObserver(
+            self, selector: #selector(sessionInactive),
+            name: NSWorkspace.sessionDidResignActiveNotification, object: nil)
+        workspace.addObserver(
+            self, selector: #selector(sessionActive),
+            name: NSWorkspace.sessionDidBecomeActiveNotification, object: nil)
+        // loginwindow's lock notifications are not a documented AppKit API.
+        let distributed = DistributedNotificationCenter.default()
+        distributed.addObserver(self, selector: #selector(screenLocked),
+                                name: Notification.Name("com.apple.screenIsLocked"), object: nil)
+        distributed.addObserver(self, selector: #selector(screenUnlocked),
+                                name: Notification.Name("com.apple.screenIsUnlocked"), object: nil)
     }
 
     public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -47,6 +59,29 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         return .terminateLater
+    }
+
+    private var screenIsLocked = false
+    private var sessionIsActive = true
+
+    @objc private func screenLocked(_ notification: Notification) {
+        screenIsLocked = true
+        overlay.suspend()
+    }
+
+    @objc private func screenUnlocked(_ notification: Notification) {
+        screenIsLocked = false
+        if sessionIsActive { overlay.resume() }
+    }
+
+    @objc private func sessionInactive(_ notification: Notification) {
+        sessionIsActive = false
+        overlay.suspend()
+    }
+
+    @objc private func sessionActive(_ notification: Notification) {
+        sessionIsActive = true
+        if !screenIsLocked { overlay.resume() }
     }
 
     @objc private func layoutChanged(_ notification: Notification) {
