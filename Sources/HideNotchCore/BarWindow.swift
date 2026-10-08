@@ -15,6 +15,7 @@ public final class BarWindow: NSWindow, BarWindowHosting {
         super.init(contentRect: .zero, styleMask: .borderless, backing: .buffered, defer: true)
         backgroundColor = .clear
         isOpaque = false
+        animationBehavior = .none
         contentView = ScreenMaskView()
         hasShadow = false
         ignoresMouseEvents = true
@@ -32,10 +33,14 @@ public final class BarWindow: NSWindow, BarWindowHosting {
     }
 
     public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true) {
-        (contentView as? ScreenMaskView)?.menuBarHeight = menuBarHeight
-        (contentView as? ScreenMaskView)?.setRoundedCornersEnabled(roundedCornersEnabled, animated: isVisible)
+        let wasVisible = isVisible
+        let mask = contentView as? ScreenMaskView
+        mask?.menuBarHeight = menuBarHeight
+        mask?.setRoundedCornersEnabled(roundedCornersEnabled, animated: wasVisible)
+        if !wasVisible { mask?.revealProgress = 0 }
         setFrame(rect, display: true)
         orderFrontRegardless()
+        if !wasVisible { mask?.animateReveal() }
     }
 
     public func hide() {
@@ -48,7 +53,11 @@ final class ScreenMaskView: NSView {
     static let cornerRadius: CGFloat = 16
 
     private(set) var roundedCornersEnabled = true
-    private(set) var radiusAnimation: CornerRadiusAnimation?
+    private(set) var maskAnimation: ScreenMaskAnimation?
+
+    var revealProgress: CGFloat = 1 {
+        didSet { needsDisplay = true }
+    }
 
     var displayedCornerRadius: CGFloat = cornerRadius {
         didSet { needsDisplay = true }
@@ -57,15 +66,24 @@ final class ScreenMaskView: NSView {
     func setRoundedCornersEnabled(_ enabled: Bool, animated: Bool) {
         guard enabled != roundedCornersEnabled || !animated else { return }
         roundedCornersEnabled = enabled
-        radiusAnimation?.stop()
-        radiusAnimation = nil
+        maskAnimation?.stop()
+        maskAnimation = nil
         let targetRadius = enabled ? Self.cornerRadius : 0
         guard animated else {
             displayedCornerRadius = targetRadius
             return
         }
-        let animation = CornerRadiusAnimation(view: self, targetRadius: targetRadius)
-        radiusAnimation = animation
+        animate(to: targetRadius)
+    }
+
+    func animateReveal() {
+        animate(to: roundedCornersEnabled ? Self.cornerRadius : 0)
+    }
+
+    private func animate(to targetRadius: CGFloat) {
+        maskAnimation?.stop()
+        let animation = ScreenMaskAnimation(view: self, targetRadius: targetRadius)
+        maskAnimation = animation
         animation.start()
     }
 
@@ -76,6 +94,9 @@ final class ScreenMaskView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         guard let context = NSGraphicsContext.current?.cgContext else { return }
         context.clear(bounds)
+        let revealHeight = bounds.height * revealProgress
+        context.clip(to: CGRect(x: bounds.minX, y: bounds.maxY - revealHeight,
+                                width: bounds.width, height: revealHeight))
 
         let desktop = CGRect(
             x: bounds.minX, y: bounds.minY,
@@ -90,15 +111,17 @@ final class ScreenMaskView: NSView {
     }
 }
 
-final class CornerRadiusAnimation: NSAnimation {
+final class ScreenMaskAnimation: NSAnimation {
     private weak var view: ScreenMaskView?
     private let startRadius: CGFloat
     private let targetRadius: CGFloat
+    private let startRevealProgress: CGFloat
 
     @MainActor init(view: ScreenMaskView, targetRadius: CGFloat) {
         self.view = view
         self.startRadius = view.displayedCornerRadius
         self.targetRadius = targetRadius
+        self.startRevealProgress = view.revealProgress
         super.init(duration: 0.25, animationCurve: .easeInOut)
         animationBlockingMode = .nonblocking
         frameRate = 60
@@ -112,9 +135,12 @@ final class CornerRadiusAnimation: NSAnimation {
         didSet {
             // Nonblocking NSAnimation updates run on the main thread.
             let view = view
-            let radius = startRadius + (targetRadius - startRadius) * CGFloat(currentValue)
+            let progress = CGFloat(currentValue)
+            let radius = startRadius + (targetRadius - startRadius) * progress
+            let reveal = startRevealProgress + (1 - startRevealProgress) * progress
             MainActor.assumeIsolated {
                 view?.displayedCornerRadius = radius
+                view?.revealProgress = reveal
             }
         }
     }

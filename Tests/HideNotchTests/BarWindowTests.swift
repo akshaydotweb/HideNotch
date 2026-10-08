@@ -19,6 +19,7 @@ struct BarWindowTests {
         let window = BarWindow()
         #expect(window.backgroundColor == .clear)
         #expect(!window.isOpaque)
+        #expect(window.animationBehavior == .none)
         #expect(window.contentView is ScreenMaskView)
         #expect(!window.hasShadow)
         #expect(window.ignoresMouseEvents)
@@ -54,7 +55,7 @@ struct BarWindowTests {
         #expect(view.displayedCornerRadius == 0)
 
         view.setRoundedCornersEnabled(true, animated: true)
-        let growing = try #require(view.radiusAnimation)
+        let growing = try #require(view.maskAnimation)
         growing.stop()
         growing.currentProgress = 0.5
         let intermediateRadius = view.displayedCornerRadius
@@ -62,21 +63,67 @@ struct BarWindowTests {
         #expect(intermediateRadius < ScreenMaskView.cornerRadius)
 
         view.setRoundedCornersEnabled(true, animated: true)
-        #expect(view.radiusAnimation === growing)
+        #expect(view.maskAnimation === growing)
         #expect(view.displayedCornerRadius == intermediateRadius)
 
         view.setRoundedCornersEnabled(false, animated: true)
-        let shrinking = try #require(view.radiusAnimation)
+        let shrinking = try #require(view.maskAnimation)
         shrinking.stop()
         #expect(view.displayedCornerRadius == intermediateRadius)
         shrinking.currentProgress = 1
         #expect(view.displayedCornerRadius == 0)
 
         view.setRoundedCornersEnabled(true, animated: true)
-        let finishing = try #require(view.radiusAnimation)
+        let finishing = try #require(view.maskAnimation)
         finishing.stop()
         finishing.currentProgress = 1
         #expect(view.displayedCornerRadius == ScreenMaskView.cornerRadius)
+    }
+
+    @Test func openingRevealsMaskFromTopWithoutMovingWindowOrRestartingOnRefresh() throws {
+        let window = BarWindow()
+        defer { window.hide() }
+        let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
+        window.show(at: rect, menuBarHeight: 20)
+        let view = try #require(window.contentView as? ScreenMaskView)
+        let animation = try #require(view.maskAnimation)
+        animation.stop()
+        #expect(view.revealProgress == 0)
+
+        let context = try #require(CGContext(
+            data: nil, width: 100, height: 100, bitsPerComponent: 8, bytesPerRow: 400,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.setShouldAntialias(false)
+        let pixels = try #require(context.data).assumingMemoryBound(to: UInt8.self)
+        func draw() {
+            context.saveGState()
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+            view.draw(view.bounds)
+            NSGraphicsContext.restoreGraphicsState()
+            context.restoreGState()
+        }
+        func alpha(_ x: Int, _ y: Int) -> UInt8 { pixels[(99 - y) * 400 + x * 4 + 3] }
+
+        draw()
+        #expect(alpha(50, 90) == 0)
+        #expect(alpha(0, 0) == 0)
+        animation.currentProgress = 0.5
+        draw()
+        #expect(alpha(50, 90) == 255)
+        #expect(alpha(0, 79) == 255)
+        #expect(alpha(0, 0) == 0)
+        #expect(window.frame == rect)
+
+        window.show(at: rect, menuBarHeight: 20)
+        #expect(view.maskAnimation === animation)
+        #expect(view.revealProgress > 0 && view.revealProgress < 1)
+        animation.currentProgress = 1
+        draw()
+        #expect(alpha(0, 0) == 255)
+        #expect(alpha(50, 40) == 0)
+        #expect(view.revealProgress == 1)
     }
 
     @Test(arguments: [true, false])
