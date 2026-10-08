@@ -38,6 +38,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
+    public func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // Start after returning terminateLater, so even an immediate completion can reply safely.
+        Task { @MainActor in
+            overlay.isEnabled = false
+            overlay.hideAll {
+                sender.reply(toApplicationShouldTerminate: true)
+            }
+        }
+        return .terminateLater
+    }
+
     @objc private func layoutChanged(_ notification: Notification) {
         overlay.refresh()
         // Screens may not have settled yet (e.g. right after wake); refresh again shortly after.

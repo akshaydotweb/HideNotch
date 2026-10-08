@@ -5,9 +5,19 @@ public protocol BarWindowHosting: AnyObject {
     var frame: CGRect { get }
     func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool)
     func hide()
+    func hide(animated: Bool, completion: @escaping @MainActor () -> Void)
+}
+
+public extension BarWindowHosting {
+    func hide(animated: Bool, completion: @escaping @MainActor () -> Void) {
+        hide()
+        completion()
+    }
 }
 
 public final class BarWindow: NSWindow, BarWindowHosting {
+    private var isHiding = false
+    private var hideCompletions: [@MainActor () -> Void] = []
     /// One below the system menu bar so menu titles and status items draw on top.
     public static let barLevel = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue - 1)
 
@@ -34,17 +44,42 @@ public final class BarWindow: NSWindow, BarWindowHosting {
 
     public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true) {
         let wasVisible = isVisible
+        let wasHiding = isHiding
+        isHiding = false
+        hideCompletions.removeAll()
         let mask = contentView as? ScreenMaskView
         mask?.menuBarHeight = menuBarHeight
         mask?.setRoundedCornersEnabled(roundedCornersEnabled, animated: wasVisible)
-        if !wasVisible { mask?.revealProgress = 0 }
+        if !wasVisible {
+            mask?.revealProgress = 0
+            mask?.displayedCornerRadius = 0
+        }
         setFrame(rect, display: true)
         orderFrontRegardless()
-        if !wasVisible { mask?.animateReveal() }
+        if !wasVisible || wasHiding { mask?.animateReveal() }
     }
 
     public func hide() {
+        (contentView as? ScreenMaskView)?.maskAnimation?.stop()
+        isHiding = false
         orderOut(nil)
+        let completions = hideCompletions
+        hideCompletions.removeAll()
+        completions.forEach { $0() }
+    }
+
+    public func hide(animated: Bool, completion: @escaping @MainActor () -> Void) {
+        guard animated, isVisible, let mask = contentView as? ScreenMaskView else {
+            hide()
+            completion()
+            return
+        }
+        hideCompletions.append(completion)
+        guard !isHiding else { return }
+        isHiding = true
+        mask.animateReveal(visible: false) { [weak self] in
+            self?.hide()
+        }
     }
 }
 
@@ -76,13 +111,16 @@ final class ScreenMaskView: NSView {
         animate(to: targetRadius)
     }
 
-    func animateReveal() {
-        animate(to: roundedCornersEnabled ? Self.cornerRadius : 0)
+    func animateReveal(visible: Bool = true, completion: @escaping @MainActor () -> Void = {}) {
+        animate(to: visible && roundedCornersEnabled ? Self.cornerRadius : 0,
+                revealProgress: visible ? 1 : 0, completion: completion)
     }
 
-    private func animate(to targetRadius: CGFloat) {
+    private func animate(to targetRadius: CGFloat, revealProgress: CGFloat = 1,
+                         completion: @escaping @MainActor () -> Void = {}) {
         maskAnimation?.stop()
-        let animation = ScreenMaskAnimation(view: self, targetRadius: targetRadius)
+        let animation = ScreenMaskAnimation(view: self, targetRadius: targetRadius,
+                                            targetRevealProgress: revealProgress, completion: completion)
         maskAnimation = animation
         animation.start()
     }
@@ -94,37 +132,62 @@ final class ScreenMaskView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         guard let context = NSGraphicsContext.current?.cgContext else { return }
         context.clear(bounds)
-        let revealHeight = bounds.height * revealProgress
-        context.clip(to: CGRect(x: bounds.minX, y: bounds.maxY - revealHeight,
-                                width: bounds.width, height: revealHeight))
-
         let desktop = CGRect(
             x: bounds.minX, y: bounds.minY,
             width: bounds.width, height: max(0, bounds.height - menuBarHeight))
-        let mask = CGMutablePath()
-        mask.addRect(bounds)
-        let radius = displayedCornerRadius
-        mask.addRoundedRect(in: desktop, cornerWidth: radius, cornerHeight: radius)
-        context.addPath(mask)
         context.setFillColor(NSColor.black.cgColor)
-        context.drawPath(using: .eoFill)
+        func drawMask(radius: CGFloat) {
+            let mask = CGMutablePath()
+            mask.addRect(bounds)
+            mask.addRoundedRect(in: desktop, cornerWidth: radius, cornerHeight: radius)
+            context.addPath(mask)
+            context.drawPath(using: .eoFill)
+        }
+
+        // Slide the strip and its upper corners together, keeping their shape intact.
+        let topHeight = menuBarHeight + Self.cornerRadius
+        let topRadius = revealProgress < 1
+            ? (roundedCornersEnabled ? Self.cornerRadius : 0)
+            : displayedCornerRadius
+        context.saveGState()
+        context.clip(to: CGRect(x: bounds.minX, y: bounds.maxY - topHeight,
+                                width: bounds.width, height: topHeight))
+        context.translateBy(x: 0, y: topHeight * (1 - revealProgress))
+        drawMask(radius: topRadius)
+        context.restoreGState()
+
+        context.saveGState()
+        context.clip(to: CGRect(x: bounds.minX, y: bounds.minY,
+                                width: bounds.width, height: Self.cornerRadius))
+        drawMask(radius: displayedCornerRadius)
+        context.restoreGState()
     }
 }
 
 final class ScreenMaskAnimation: NSAnimation {
+    static let transitionDuration: TimeInterval = 0.6
     private weak var view: ScreenMaskView?
     private let startRadius: CGFloat
     private let targetRadius: CGFloat
     private let startRevealProgress: CGFloat
+    private let targetRevealProgress: CGFloat
+    private var completion: (@MainActor () -> Void)?
 
-    @MainActor init(view: ScreenMaskView, targetRadius: CGFloat) {
+    @MainActor init(view: ScreenMaskView, targetRadius: CGFloat, targetRevealProgress: CGFloat,
+                    completion: @escaping @MainActor () -> Void) {
         self.view = view
         self.startRadius = view.displayedCornerRadius
         self.targetRadius = targetRadius
         self.startRevealProgress = view.revealProgress
-        super.init(duration: 0.25, animationCurve: .easeInOut)
+        self.targetRevealProgress = targetRevealProgress
+        self.completion = completion
+        super.init(duration: Self.transitionDuration, animationCurve: .easeInOut)
         animationBlockingMode = .nonblocking
         frameRate = 60
+    }
+
+    override var runLoopModesForAnimating: [RunLoop.Mode]? {
+        [.default, .modalPanel, .eventTracking]
     }
 
     required init?(coder: NSCoder) {
@@ -137,10 +200,13 @@ final class ScreenMaskAnimation: NSAnimation {
             let view = view
             let progress = CGFloat(currentValue)
             let radius = startRadius + (targetRadius - startRadius) * progress
-            let reveal = startRevealProgress + (1 - startRevealProgress) * progress
+            let reveal = startRevealProgress + (targetRevealProgress - startRevealProgress) * progress
+            let completion = currentProgress >= 1 ? self.completion : nil
+            if currentProgress >= 1 { self.completion = nil }
             MainActor.assumeIsolated {
                 view?.displayedCornerRadius = radius
                 view?.revealProgress = reveal
+                completion?()
             }
         }
     }

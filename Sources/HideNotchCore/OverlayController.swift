@@ -36,10 +36,14 @@ public final class OverlayController {
     }
 
     public func refresh() {
-        let layouts = isEnabled ? screens.currentScreens().compactMap { screen -> (frame: CGRect, menuBarHeight: CGFloat)? in
+        guard isEnabled else {
+            hideAll(completion: {})
+            return
+        }
+        let layouts = screens.currentScreens().compactMap { screen -> (frame: CGRect, menuBarHeight: CGFloat)? in
             guard let bar = BarGeometry.barRect(for: screen) else { return nil }
             return (screen.frame, bar.height)
-        } : []
+        }
         while windows.count > layouts.count {
             windows.removeLast().hide()
         }
@@ -49,6 +53,24 @@ public final class OverlayController {
         for (window, layout) in zip(windows, layouts) {
             window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight,
                         roundedCornersEnabled: roundedCornersEnabled)
+        }
+    }
+
+    public func hideAll(completion: @escaping @MainActor () -> Void) {
+        let hidingWindows = windows
+        guard !hidingWindows.isEmpty else {
+            completion()
+            return
+        }
+        var remaining = hidingWindows.count
+        for window in hidingWindows {
+            window.hide(animated: true) { [weak self, weak window] in
+                if let self, let window, !self.isEnabled {
+                    self.windows.removeAll { $0 === window }
+                }
+                remaining -= 1
+                if remaining == 0 { completion() }
+            }
         }
     }
 }

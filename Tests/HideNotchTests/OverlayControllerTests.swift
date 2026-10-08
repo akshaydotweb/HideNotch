@@ -70,6 +70,24 @@ struct OverlayControllerTests {
         #expect(!factory.made[0].isShown)
     }
 
+    @Test func animatedDisableRetainsWindowsAndWaitsForEveryScreen() {
+        screens.list = [Screens.notched, Screens.notched]
+        let controller = makeController()
+        controller.isEnabled = true
+        factory.made.forEach { $0.delaysHide = true }
+        controller.isEnabled = false
+        #expect(controller.windows.count == 2)
+        #expect(factory.made.allSatisfy { $0.isShown })
+        var completed = false
+        controller.hideAll { completed = true }
+        factory.made[0].completeHide()
+        #expect(!completed)
+        #expect(controller.windows.count == 1)
+        factory.made[1].completeHide()
+        #expect(completed)
+        #expect(controller.windows.isEmpty)
+    }
+
     @Test func repeatedRefreshIsIdempotent() {
         screens.list = [Screens.notched]
         let controller = makeController()

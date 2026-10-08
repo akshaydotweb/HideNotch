@@ -83,15 +83,15 @@ struct BarWindowTests {
     @Test func openingRevealsMaskFromTopWithoutMovingWindowOrRestartingOnRefresh() throws {
         let window = BarWindow()
         defer { window.hide() }
-        let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
-        window.show(at: rect, menuBarHeight: 20)
+        let rect = CGRect(x: 0, y: 0, width: 100, height: 1000)
+        window.show(at: rect, menuBarHeight: 40)
         let view = try #require(window.contentView as? ScreenMaskView)
         let animation = try #require(view.maskAnimation)
         animation.stop()
         #expect(view.revealProgress == 0)
 
         let context = try #require(CGContext(
-            data: nil, width: 100, height: 100, bitsPerComponent: 8, bytesPerRow: 400,
+            data: nil, width: 100, height: 1000, bitsPerComponent: 8, bytesPerRow: 400,
             space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
         context.setShouldAntialias(false)
@@ -104,25 +104,98 @@ struct BarWindowTests {
             NSGraphicsContext.restoreGraphicsState()
             context.restoreGState()
         }
-        func alpha(_ x: Int, _ y: Int) -> UInt8 { pixels[(99 - y) * 400 + x * 4 + 3] }
+        func alpha(_ x: Int, _ y: Int) -> UInt8 { pixels[(999 - y) * 400 + x * 4 + 3] }
 
         draw()
-        #expect(alpha(50, 90) == 0)
+        #expect(alpha(50, 990) == 0)
         #expect(alpha(0, 0) == 0)
         animation.currentProgress = 0.5
         draw()
-        #expect(alpha(50, 90) == 255)
-        #expect(alpha(0, 79) == 255)
-        #expect(alpha(0, 0) == 0)
+        #expect(alpha(50, 990) == 255)
+        // The corner sits directly below the moving strip, with its full radius.
+        #expect(alpha(50, 987) == 0)
+        #expect(alpha(0, 987) == 255)
+        #expect(alpha(3, 984) == 255)
+        #expect(alpha(50, 965) == 0)
+        #expect(alpha(0, 959) == 0)
+        #expect(alpha(3, 3) == 0)
+        #expect(view.displayedCornerRadius > 0 && view.displayedCornerRadius < ScreenMaskView.cornerRadius)
         #expect(window.frame == rect)
 
-        window.show(at: rect, menuBarHeight: 20)
+        window.show(at: rect, menuBarHeight: 40)
         #expect(view.maskAnimation === animation)
         #expect(view.revealProgress > 0 && view.revealProgress < 1)
         animation.currentProgress = 1
         draw()
         #expect(alpha(0, 0) == 255)
+        #expect(alpha(3, 3) == 255)
         #expect(alpha(50, 40) == 0)
+        #expect(view.revealProgress == 1)
+
+        view.animateReveal(visible: false)
+        let reverse = try #require(view.maskAnimation)
+        reverse.stop()
+        reverse.currentProgress = 0.5
+        draw()
+        #expect(alpha(50, 987) == 0)
+        #expect(alpha(0, 987) == 255)
+        #expect(alpha(3, 984) == 255)
+        reverse.currentProgress = 1
+        draw()
+        #expect(alpha(50, 990) == 0)
+        #expect(alpha(0, 0) == 0)
+    }
+
+    @Test func hidingReversesRevealAndOrdersOutOnlyAfterCompletion() throws {
+        let window = BarWindow()
+        defer { window.hide() }
+        window.show(at: CGRect(x: 0, y: 0, width: 100, height: 1000), menuBarHeight: 40)
+        let view = try #require(window.contentView as? ScreenMaskView)
+        let opening = try #require(view.maskAnimation)
+        opening.stop()
+        opening.currentProgress = 1
+
+        var completed = false
+        window.hide(animated: true) { completed = true }
+        let closing = try #require(view.maskAnimation)
+        #expect(closing.duration == 0.6)
+        #expect(closing.runLoopModesForAnimating?.contains(.modalPanel) == true)
+        closing.stop()
+        closing.currentProgress = 0.5
+        #expect(window.isVisible)
+        #expect(!completed)
+        #expect(view.revealProgress > 0 && view.revealProgress < 1)
+        #expect(view.displayedCornerRadius > 0 && view.displayedCornerRadius < ScreenMaskView.cornerRadius)
+        closing.currentProgress = 1
+        #expect(view.revealProgress == 0)
+        #expect(view.displayedCornerRadius == 0)
+        #expect(!window.isVisible)
+        #expect(completed)
+    }
+
+    @Test func showingDuringExitReversesWithoutJumpingOrHidingLater() throws {
+        let window = BarWindow()
+        defer { window.hide() }
+        let rect = CGRect(x: 0, y: 0, width: 100, height: 1000)
+        window.show(at: rect, menuBarHeight: 40)
+        let view = try #require(window.contentView as? ScreenMaskView)
+        let opening = try #require(view.maskAnimation)
+        opening.stop()
+        opening.currentProgress = 1
+        var hidden = false
+        window.hide(animated: true) { hidden = true }
+        let closing = try #require(view.maskAnimation)
+        closing.stop()
+        closing.currentProgress = 0.5
+        let intermediate = view.revealProgress
+        window.show(at: rect, menuBarHeight: 40)
+        #expect(view.revealProgress == intermediate)
+        let reopening = try #require(view.maskAnimation)
+        #expect(reopening !== closing)
+        reopening.stop()
+        reopening.currentProgress = 1
+        #expect(window.isVisible)
+        #expect(!hidden)
         #expect(view.revealProgress == 1)
     }
 
