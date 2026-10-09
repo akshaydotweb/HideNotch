@@ -9,6 +9,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     private let overlay: OverlayController
     private let loginItem: LoginItemControlling
     private let confirmHidingIcon: @MainActor () -> Bool
+    private let informSystemBackground: @MainActor () -> Void
     private(set) var statusItem: NSStatusItem?
     private var loginItemFailed = false
 
@@ -20,12 +21,14 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
 
     public init(
         preferences: Preferences, overlay: OverlayController, loginItem: LoginItemControlling,
-        confirmHidingIcon: @escaping @MainActor () -> Bool = StatusItemController.explainHiddenIcon
+        confirmHidingIcon: @escaping @MainActor () -> Bool = StatusItemController.explainHiddenIcon,
+        informSystemBackground: @escaping @MainActor () -> Void = StatusItemController.explainSystemBackground
     ) {
         self.preferences = preferences
         self.overlay = overlay
         self.loginItem = loginItem
         self.confirmHidingIcon = confirmHidingIcon
+        self.informSystemBackground = informSystemBackground
         super.init()
 
         let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
@@ -79,6 +82,24 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         preferences.overlayEnabled = enable
         overlay.isEnabled = enable
         syncMenuState()
+    }
+
+    /// Stops hiding the notch when the system background would cover the overlay.
+    public func disableOverlayForSystemBackground() {
+        guard overlay.isEnabled else { return }
+        preferences.overlayEnabled = false
+        overlay.disableImmediately()
+        restoreMenuBarIcon()
+        informSystemBackground()
+    }
+
+    public static func explainSystemBackground() {
+        NSApplication.shared.activate()
+        let alert = NSAlert()
+        alert.messageText = L10n.systemBackgroundAlertTitle
+        alert.informativeText = L10n.systemBackgroundAlertMessage
+        alert.addButton(withTitle: L10n.hiddenIconAlertConfirm)
+        alert.runModal()
     }
 
     /// Activates the (accessory) app before presenting the alert, so it doesn't appear behind other windows.

@@ -9,3 +9,5 @@
 "alert.hiddenIcon.message" = "เปิด HideNotch อีกครั้งจากแอปพลิเคชันเพื่อแสดงไอคอนบนแถบเมนูอีกครั้ง";
 "alert.hiddenIcon.confirm" = "ตกลง";
 "alert.hiddenIcon.cancel" = "ยกเลิก";
+"alert.systemBackground.title" = "ปิด Hide Notch แล้ว";
+"alert.systemBackground.message" = "Hide Notch ต้องปิด “แสดงพื้นหลังแถบเมนู” เราจะปิดให้คุณเมื่อคุณซ่อนรอยบากอีกครั้ง";

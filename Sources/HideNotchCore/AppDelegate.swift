@@ -6,6 +6,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     private let overlay = OverlayController(screens: SystemScreens(), makeWindow: { BarWindow() },
                                             onEnable: { MenuBarBackground.disable() })
     private var statusController: StatusItemController?
+    private var menuBarBackgroundMonitor: Timer?
 
     public override init() {
         super.init()
@@ -18,6 +19,18 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem())
         status.install()
         statusController = status
+
+        // SkyLight's private notification does not reliably arrive across processes.
+        // Read the setting while enabled rather than overriding a user's later change.
+        menuBarBackgroundMonitor = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self, self.overlay.isEnabled, MenuBarBackground.isEnabled == true else { return }
+                self.statusController?.disableOverlayForSystemBackground()
+            }
+        }
+        if let menuBarBackgroundMonitor {
+            RunLoop.main.add(menuBarBackgroundMonitor, forMode: .common)
+        }
 
         NotificationCenter.default.addObserver(
             self, selector: #selector(layoutChanged),

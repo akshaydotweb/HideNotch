@@ -9,3 +9,5 @@
 "alert.hiddenIcon.message" = "Mở lại HideNotch từ Ứng dụng để hiện lại biểu tượng trên thanh menu.";
 "alert.hiddenIcon.confirm" = "OK";
 "alert.hiddenIcon.cancel" = "Hủy";
+"alert.systemBackground.title" = "Hide Notch đã được tắt.";
+"alert.systemBackground.message" = "Hide Notch yêu cầu tắt “Hiển thị nền thanh menu”. Chúng tôi sẽ tắt tùy chọn này khi bạn ẩn tai thỏ lần nữa.";

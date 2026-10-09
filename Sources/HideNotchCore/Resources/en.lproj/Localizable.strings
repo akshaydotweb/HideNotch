@@ -9,3 +9,5 @@
 "alert.hiddenIcon.message" = "Reopen HideNotch from Applications to show the menu bar icon again.";
 "alert.hiddenIcon.confirm" = "OK";
 "alert.hiddenIcon.cancel" = "Cancel";
+"alert.systemBackground.title" = "Hide Notch has been turned off.";
+"alert.systemBackground.message" = "Hide Notch requires “Show menu bar background” to be off. We’ll turn it off for you when you hide the notch again.";

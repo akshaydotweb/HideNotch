@@ -9,3 +9,5 @@
 "alert.hiddenIcon.message" = "アプリケーションからHideNotchをもう一度開くと、メニューバーのアイコンが再表示されます。";
 "alert.hiddenIcon.confirm" = "OK";
 "alert.hiddenIcon.cancel" = "キャンセル";
+"alert.systemBackground.title" = "Hide Notchをオフにしました。";
+"alert.systemBackground.message" = "Hide Notchには「メニューバーの背景を表示」をオフにする必要があります。再びノッチを隠すと、自動的にオフにします。";

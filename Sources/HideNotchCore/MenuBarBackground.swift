@@ -13,6 +13,15 @@ enum MenuBarBackground {
         return unsafeBitCast(symbol, to: (@convention(c) (Bool, Bool) -> Void).self)
     }()
 
+    private static let getBlurredAppearance: (@convention(c) () -> Bool)? = {
+        guard let skyLight, let symbol = dlsym(skyLight, "SLSGetMenuBarUseBlurredAppearance") else {
+            return nil
+        }
+        return unsafeBitCast(symbol, to: (@convention(c) () -> Bool).self)
+    }()
+
+    static var isEnabled: Bool? { getBlurredAppearance?() }
+
     static func disable() {
         guard let setBlurredAppearance else {
             log.error("System menu bar background API is unavailable")

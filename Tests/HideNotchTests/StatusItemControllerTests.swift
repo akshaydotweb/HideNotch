@@ -9,6 +9,7 @@ struct StatusItemControllerTests {
     let factory = WindowFactory()
     let login = FakeLoginItem()
     let confirm = ConfirmSpy()
+    let backgroundAlert = ConfirmSpy()
 
     func makeSUT(overlayEnabled: Bool = true) -> (StatusItemController, Preferences, OverlayController) {
         let defaults = UserDefaults(suiteName: suite)!
@@ -19,7 +20,8 @@ struct StatusItemControllerTests {
         let overlay = OverlayController(screens: screens, makeWindow: factory.make)
         overlay.isEnabled = prefs.overlayEnabled
         let sut = StatusItemController(
-            preferences: prefs, overlay: overlay, loginItem: login, confirmHidingIcon: confirm.ask)
+            preferences: prefs, overlay: overlay, loginItem: login, confirmHidingIcon: confirm.ask,
+            informSystemBackground: { _ = backgroundAlert.ask() })
         return (sut, prefs, overlay)
     }
 
@@ -95,6 +97,24 @@ struct StatusItemControllerTests {
         let (sut, prefs, overlay) = makeSUT()
         #expect(sut.overlayItem.state == .on)
         sut.toggleOverlay()
+        #expect(!prefs.overlayEnabled)
+        #expect(!overlay.isEnabled)
+        #expect(overlay.windows.isEmpty)
+        #expect(sut.overlayItem.state == .off)
+        #expect(confirm.calls == 0)
+    }
+
+    @Test func systemBackgroundDisablesOverlayAndPersistsMenuState() {
+        let (sut, prefs, overlay) = makeSUT()
+        prefs.showMenuBarIcon = false
+        factory.made[0].delaysHide = true
+        sut.disableOverlayForSystemBackground()
+        #expect(!factory.made[0].isShown)
+        #expect(prefs.showMenuBarIcon)
+        #expect(sut.iconMenuItem.state == .on)
+        #expect(backgroundAlert.calls == 1)
+        sut.disableOverlayForSystemBackground()
+        #expect(backgroundAlert.calls == 1)
         #expect(!prefs.overlayEnabled)
         #expect(!overlay.isEnabled)
         #expect(overlay.windows.isEmpty)

@@ -9,3 +9,5 @@
 "alert.hiddenIcon.message" = "Vuelve a abrir HideNotch desde Aplicaciones para mostrar el icono en la barra de menús.";
 "alert.hiddenIcon.confirm" = "OK";
 "alert.hiddenIcon.cancel" = "Cancelar";
+"alert.systemBackground.title" = "Hide Notch se ha desactivado.";
+"alert.systemBackground.message" = "Hide Notch necesita que «Mostrar fondo de la barra de menús» esté desactivado. Lo desactivaremos cuando vuelvas a ocultar el notch.";

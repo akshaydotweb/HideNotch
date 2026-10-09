@@ -6,6 +6,7 @@ public enum L10n {
     static let keys = [
         "menu.hideNotch", "menu.roundedScreenCorners", "menu.launchAtLogin", "menu.launchAtLogin.failed",
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit",
+        "alert.systemBackground.title", "alert.systemBackground.message",
         "alert.hiddenIcon.title", "alert.hiddenIcon.message", "alert.hiddenIcon.confirm", "alert.hiddenIcon.cancel",
     ]
 
@@ -16,6 +17,8 @@ public enum L10n {
     static var launchAtLoginNeedsApproval: String { tr("menu.launchAtLogin.needsApproval") }
     static var quit: String { tr("menu.quit") }
     static var showMenuBarIcon: String { tr("menu.showMenuBarIcon") }
+    static var systemBackgroundAlertTitle: String { tr("alert.systemBackground.title") }
+    static var systemBackgroundAlertMessage: String { tr("alert.systemBackground.message") }
     static var hiddenIconAlertTitle: String { tr("alert.hiddenIcon.title") }
     static var hiddenIconAlertMessage: String { tr("alert.hiddenIcon.message") }
     static var hiddenIconAlertConfirm: String { tr("alert.hiddenIcon.confirm") }

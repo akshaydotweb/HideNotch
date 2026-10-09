@@ -9,3 +9,5 @@
 "alert.hiddenIcon.message" = "Buka kembali HideNotch dari Aplikasi untuk menampilkan ikon bilah menu lagi.";
 "alert.hiddenIcon.confirm" = "OK";
 "alert.hiddenIcon.cancel" = "Batal";
+"alert.systemBackground.title" = "Hide Notch telah dinonaktifkan.";
+"alert.systemBackground.message" = "Hide Notch memerlukan “Tampilkan latar belakang bar menu” dinonaktifkan. Kami akan menonaktifkannya saat Anda menyembunyikan notch lagi.";

@@ -42,6 +42,13 @@ public final class OverlayController {
         self.onEnable = onEnable
     }
 
+    public func disableImmediately() {
+        let hidingWindows = windows
+        windows.removeAll()
+        isEnabled = false
+        for window in hidingWindows { window.hide() }
+    }
+
     public func suspend() {
         guard !isSuspended else { return }
         isSuspended = true
