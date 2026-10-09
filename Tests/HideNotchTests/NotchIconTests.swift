@@ -17,7 +17,7 @@ struct NotchIconTests {
         #expect(rep?.pixelsHigh == 64)
     }
 
-    @Test func appIconShowsBarNotchAndScreen() {
+    @Test func appIconShowsOutlineNotchAndScreen() {
         let pixels = 256
         let data = NotchIcon.appIconPNG(pixels: pixels)
         let rep = NSBitmapImageRep(data: data)!
@@ -40,20 +40,17 @@ struct NotchIconTests {
             return (c.redComponent + c.greenComponent + c.blueComponent) / 3
         }
 
-        let barHeight = glyph.height * NotchIcon.GlyphLayout.barHeightFraction
-        let notchWidth = glyph.width * NotchIcon.GlyphLayout.notchWidthFraction
-        let notchDepth = glyph.height * NotchIcon.GlyphLayout.notchDepthFraction
+        // The top outline stays dark, with an open screen immediately below it.
+        let outlinePoint = CGPoint(x: glyph.minX + glyph.width * 0.25, y: glyph.maxY - glyph.height * 0.04)
+        let outlineColor = pixel(at: outlinePoint)
+        #expect(brightness(outlineColor) < 0.25)
+        #expect(outlineColor.alphaComponent > 0.9)
 
-        // Left of the notch, vertically centered in the bar.
-        let barPoint = CGPoint(x: glyph.minX + glyph.width * 0.15, y: glyph.maxY - barHeight / 2)
-        let barColor = pixel(at: barPoint)
-        #expect(brightness(barColor) < 0.25)
-        #expect(barColor.alphaComponent > 0.9)
+        let openScreenPoint = CGPoint(x: glyph.minX + glyph.width * 0.2, y: glyph.maxY - glyph.height * 0.18)
+        #expect(brightness(pixel(at: openScreenPoint)) > 0.8)
 
-        // Center x, just below the bar's bottom edge (inside the notch protrusion).
-        let notchPoint = CGPoint(x: glyph.midX, y: glyph.maxY - barHeight - notchDepth / 2)
+        let notchPoint = CGPoint(x: glyph.midX, y: glyph.maxY - glyph.height * 0.15)
         #expect(brightness(pixel(at: notchPoint)) < 0.25)
-        _ = notchWidth  // sanity: notch geometry participates in the layout above
 
         // Well below the notch, inside the "screen" area of the glyph.
         let screenPoint = CGPoint(x: glyph.midX, y: glyph.minY + glyph.height * 0.15)

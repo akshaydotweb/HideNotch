@@ -1,28 +1,10 @@
 import AppKit
 
-/// Draws the HideNotch glyph in code: a screen outline, a solid top bar spanning
-/// the full width, and a notch protruding down from the bar's center — meaning
-/// "the notch blends into a black menu bar". Used for both the menu bar icon and
-/// the app icon so the two never drift out of sync.
+/// Draws the same screen outline and notch for the menu bar and app icon.
 @MainActor
 public enum NotchIcon {
-    /// Fractions of the glyph rect that shape the outline/bar/notch. Tuned for
-    /// legibility at 18 pt; a laptop-ish aspect keeps the shape readable at small sizes.
     enum GlyphLayout {
-        /// Height of the glyph rect as a fraction of its width (a 16×12 pt laptop-ish aspect).
-        static let heightFraction: CGFloat = 12.0 / 16.0
-        /// Screen-outline stroke width, as a fraction of the glyph rect's height.
-        static let lineWidthFraction: CGFloat = 0.10
-        /// Corner radius of the screen outline and the bar's top corners, as a fraction of height.
-        static let cornerRadiusFraction: CGFloat = 0.20
-        /// Height of the solid top bar, as a fraction of the glyph rect's height.
-        static let barHeightFraction: CGFloat = 0.34
-        /// Width of the notch, as a fraction of the glyph rect's width.
-        static let notchWidthFraction: CGFloat = 0.36
-        /// How far the notch protrudes below the bar, as a fraction of the glyph rect's height.
-        static let notchDepthFraction: CGFloat = 0.18
-        /// Corner radius of the notch's bottom corners, as a fraction of the glyph rect's height.
-        static let notchCornerRadiusFraction: CGFloat = 0.05
+        static let heightFraction: CGFloat = 14.0 / 18.0
     }
 
     /// Fractions describing how the glyph sits on the app icon's rounded-square canvas.
@@ -39,7 +21,7 @@ public enum NotchIcon {
     public static func menuBarImage() -> NSImage {
         let canvas = NSRect(x: 0, y: 0, width: 18, height: 18)
         let image = NSImage(size: canvas.size, flipped: false) { rect in
-            let glyph = glyphRect(width: 16, centeredIn: rect)
+            let glyph = glyphRect(width: 18, centeredIn: rect)
             drawGlyph(in: glyph, color: .black)
             return true
         }
@@ -106,55 +88,19 @@ public enum NotchIcon {
         drawGlyph(in: glyph, color: .black)
     }
 
-    /// Draws the screen outline, top bar, and notch into `rect`, in `color`.
-    /// `rect` uses a bottom-left origin, y-up coordinate system (standard AppKit drawing space).
+    /// Scales the 18-point menu-bar glyph to the requested size.
+    /// AppKit drawing coordinates use a bottom-left origin.
     static func drawGlyph(in rect: CGRect, color: NSColor) {
-        let lineWidth = rect.height * GlyphLayout.lineWidthFraction
-        let cornerRadius = rect.height * GlyphLayout.cornerRadiusFraction
+        let scale = rect.width / 18
+        let lineWidth = 1.4 * scale
         let outlineRect = rect.insetBy(dx: lineWidth / 2, dy: lineWidth / 2)
-
-        color.setStroke()
-        let outline = NSBezierPath(roundedRect: outlineRect, xRadius: cornerRadius, yRadius: cornerRadius)
+        let outline = NSBezierPath(roundedRect: outlineRect, xRadius: 2.5 * scale, yRadius: 2.5 * scale)
         outline.lineWidth = lineWidth
+        color.setStroke()
         outline.stroke()
 
+        let notch = CGRect(x: rect.midX - 3.5 * scale, y: rect.maxY - 4 * scale, width: 7 * scale, height: 4 * scale)
         color.setFill()
-        barAndNotchPath(in: outlineRect, cornerRadius: cornerRadius).fill()
-    }
-
-    /// The solid shape combining the top bar (full width, rounded top corners matching
-    /// the outline) with a notch protruding down from its center (rounded bottom corners).
-    private static func barAndNotchPath(in rect: CGRect, cornerRadius: CGFloat) -> NSBezierPath {
-        let barHeight = rect.height * GlyphLayout.barHeightFraction
-        let barBottomY = rect.maxY - barHeight
-        let notchWidth = rect.width * GlyphLayout.notchWidthFraction
-        let notchHalfWidth = notchWidth / 2
-        let notchDepth = rect.height * GlyphLayout.notchDepthFraction
-        let notchCornerRadius = rect.height * GlyphLayout.notchCornerRadiusFraction
-        let notchBottomY = barBottomY - notchDepth
-
-        // Clockwise from the bar's top-left corner, stepping down into the notch and back up.
-        let points: [CGPoint] = [
-            CGPoint(x: rect.minX, y: rect.maxY),
-            CGPoint(x: rect.maxX, y: rect.maxY),
-            CGPoint(x: rect.maxX, y: barBottomY),
-            CGPoint(x: rect.midX + notchHalfWidth, y: barBottomY),
-            CGPoint(x: rect.midX + notchHalfWidth, y: notchBottomY),
-            CGPoint(x: rect.midX - notchHalfWidth, y: notchBottomY),
-            CGPoint(x: rect.midX - notchHalfWidth, y: barBottomY),
-            CGPoint(x: rect.minX, y: barBottomY),
-        ]
-        let radii: [CGFloat] = [
-            cornerRadius, cornerRadius, 0, 0, notchCornerRadius, notchCornerRadius, 0, 0,
-        ]
-
-        let cgPath = CGMutablePath()
-        cgPath.move(to: points[points.count - 1])
-        for i in 0..<points.count {
-            cgPath.addArc(
-                tangent1End: points[i], tangent2End: points[(i + 1) % points.count], radius: radii[i])
-        }
-        cgPath.closeSubpath()
-        return NSBezierPath(cgPath: cgPath)
+        NSBezierPath(roundedRect: notch, xRadius: scale, yRadius: scale).fill()
     }
 }
