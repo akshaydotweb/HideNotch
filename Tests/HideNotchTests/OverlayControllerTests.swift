@@ -4,6 +4,25 @@ import Testing
 
 @MainActor
 struct OverlayControllerTests {
+    @Test func preparesSystemAppearanceOnlyWhenEnabling() {
+        let screens = FakeScreens()
+        let factory = WindowFactory()
+        var calls = 0
+        let overlay = OverlayController(screens: screens, makeWindow: factory.make, onEnable: { calls += 1 })
+        #expect(calls == 0)
+        overlay.isEnabled = true
+        #expect(calls == 1)
+        overlay.refresh()
+        overlay.isEnabled = true
+        overlay.suspend()
+        overlay.resume()
+        #expect(calls == 1)
+        overlay.isEnabled = false
+        #expect(calls == 1)
+        overlay.isEnabled = true
+        #expect(calls == 2)
+    }
+
     let screens = FakeScreens()
     let factory = WindowFactory()
 

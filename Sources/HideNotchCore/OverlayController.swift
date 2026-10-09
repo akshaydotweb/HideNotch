@@ -20,20 +20,26 @@ public struct SystemScreens: ScreenProviding {
 public final class OverlayController {
     private let screens: ScreenProviding
     private let makeWindow: @MainActor () -> BarWindowHosting
+    private let onEnable: @MainActor () -> Void
     private(set) var windows: [BarWindowHosting] = []
     private(set) var isSuspended = false
 
     public var isEnabled = false {
-        didSet { refresh() }
+        didSet {
+            if isEnabled && !oldValue { onEnable() }
+            refresh()
+        }
     }
 
     public var roundedCornersEnabled = true {
         didSet { refresh() }
     }
 
-    public init(screens: ScreenProviding, makeWindow: @escaping @MainActor () -> BarWindowHosting) {
+    public init(screens: ScreenProviding, makeWindow: @escaping @MainActor () -> BarWindowHosting,
+                onEnable: @escaping @MainActor () -> Void = {}) {
         self.screens = screens
         self.makeWindow = makeWindow
+        self.onEnable = onEnable
     }
 
     public func suspend() {
