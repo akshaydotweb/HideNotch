@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "เปิดเมื่อเข้าสู่ระบบ (ล้มเหลว)";
 "menu.launchAtLogin.needsApproval" = "เปิดเมื่อเข้าสู่ระบบ (ต้องอนุมัติในการตั้งค่าระบบ)";
 "menu.quit" = "ออก";
-"alert.enable.title" = "ซ่อนรอยบาก";
-"alert.enable.message" = "พื้นหลังของแถบเมนูบนหน้าจอที่มีรอยบากจะเปลี่ยนเป็นสีดำ เพื่อให้กลืนไปกับรอยบาก";
-"alert.enable.confirm" = "เปิด";
-"alert.enable.cancel" = "ยกเลิก";
 "menu.showMenuBarIcon" = "แสดงไอคอนในแถบเมนู";
 "menu.roundedScreenCorners" = "มุมหน้าจอโค้งมน";
+"alert.hiddenIcon.title" = "ซ่อนไอคอน HideNotch แล้ว";
+"alert.hiddenIcon.message" = "เปิด HideNotch อีกครั้งจากแอปพลิเคชันเพื่อแสดงไอคอนบนแถบเมนูอีกครั้ง";
+"alert.hiddenIcon.confirm" = "ตกลง";
+"alert.hiddenIcon.cancel" = "ยกเลิก";

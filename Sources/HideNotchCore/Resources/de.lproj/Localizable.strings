@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "Beim Anmelden öffnen (fehlgeschlagen)";
 "menu.launchAtLogin.needsApproval" = "Beim Anmelden öffnen (in den Systemeinstellungen erlauben)";
 "menu.quit" = "Beenden";
-"alert.enable.title" = "Notch ausblenden";
-"alert.enable.message" = "Der Hintergrund der Menüleiste auf Bildschirmen mit Notch wird schwarz, damit er mit der Notch verschmilzt.";
-"alert.enable.confirm" = "Einschalten";
-"alert.enable.cancel" = "Abbrechen";
 "menu.showMenuBarIcon" = "Symbol in der Menüleiste anzeigen";
 "menu.roundedScreenCorners" = "Abgerundete Bildschirmecken";
+"alert.hiddenIcon.title" = "Das HideNotch-Symbol ist jetzt ausgeblendet.";
+"alert.hiddenIcon.message" = "Öffne HideNotch erneut aus Programme, um das Symbol in der Menüleiste wieder anzuzeigen.";
+"alert.hiddenIcon.confirm" = "OK";
+"alert.hiddenIcon.cancel" = "Abbrechen";

@@ -6,7 +6,7 @@ public enum L10n {
     static let keys = [
         "menu.hideNotch", "menu.roundedScreenCorners", "menu.launchAtLogin", "menu.launchAtLogin.failed",
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit",
-        "alert.enable.title", "alert.enable.message", "alert.enable.confirm", "alert.enable.cancel",
+        "alert.hiddenIcon.title", "alert.hiddenIcon.message", "alert.hiddenIcon.confirm", "alert.hiddenIcon.cancel",
     ]
 
     static var hideNotch: String { tr("menu.hideNotch") }
@@ -16,10 +16,10 @@ public enum L10n {
     static var launchAtLoginNeedsApproval: String { tr("menu.launchAtLogin.needsApproval") }
     static var quit: String { tr("menu.quit") }
     static var showMenuBarIcon: String { tr("menu.showMenuBarIcon") }
-    static var enableAlertTitle: String { tr("alert.enable.title") }
-    static var enableAlertMessage: String { tr("alert.enable.message") }
-    static var enableAlertConfirm: String { tr("alert.enable.confirm") }
-    static var enableAlertCancel: String { tr("alert.enable.cancel") }
+    static var hiddenIconAlertTitle: String { tr("alert.hiddenIcon.title") }
+    static var hiddenIconAlertMessage: String { tr("alert.hiddenIcon.message") }
+    static var hiddenIconAlertConfirm: String { tr("alert.hiddenIcon.confirm") }
+    static var hiddenIconAlertCancel: String { tr("alert.hiddenIcon.cancel") }
 
     static func tr(_ key: String, bundle: Bundle = .module) -> String {
         bundle.localizedString(forKey: key, value: nil, table: nil)

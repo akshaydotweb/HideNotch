@@ -19,7 +19,7 @@ struct StatusItemControllerTests {
         let overlay = OverlayController(screens: screens, makeWindow: factory.make)
         overlay.isEnabled = prefs.overlayEnabled
         let sut = StatusItemController(
-            preferences: prefs, overlay: overlay, loginItem: login, confirmEnable: confirm.ask)
+            preferences: prefs, overlay: overlay, loginItem: login, confirmHidingIcon: confirm.ask)
         return (sut, prefs, overlay)
     }
 
@@ -62,6 +62,7 @@ struct StatusItemControllerTests {
         }
         #expect(sut.statusItem?.isVisible == true)
         sut.toggleMenuBarIcon()
+        #expect(confirm.calls == 1)
         #expect(!prefs.showMenuBarIcon)
         #expect(sut.statusItem?.isVisible == false)
         #expect(sut.iconMenuItem.state == .off)
@@ -101,22 +102,20 @@ struct StatusItemControllerTests {
         #expect(confirm.calls == 0)
     }
 
-    @Test func enablingAsksAndCancelKeepsOff() {
-        let (sut, prefs, overlay) = makeSUT(overlayEnabled: false)
+    @Test func cancelHidingIconRestoresAccess() {
+        let (sut, prefs, overlay) = makeSUT()
         confirm.answer = false
-        sut.toggleOverlay()
+        sut.toggleMenuBarIcon()
         #expect(confirm.calls == 1)
-        #expect(!prefs.overlayEnabled)
-        #expect(!overlay.isEnabled)
-        #expect(overlay.windows.isEmpty)
-        #expect(sut.overlayItem.state == .off)
+        #expect(prefs.showMenuBarIcon)
+        #expect(sut.iconMenuItem.state == .on)
+        #expect(overlay.isEnabled)
     }
 
-    @Test func enablingConfirmedTurnsOn() {
+    @Test func enablingOverlayTurnsOnWithoutDialog() {
         let (sut, prefs, overlay) = makeSUT(overlayEnabled: false)
-        confirm.answer = true
         sut.toggleOverlay()
-        #expect(confirm.calls == 1)
+        #expect(confirm.calls == 0)
         #expect(prefs.overlayEnabled)
         #expect(overlay.windows.count == 1)
         #expect(sut.overlayItem.state == .on)

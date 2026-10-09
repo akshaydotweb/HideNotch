@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "Mở khi đăng nhập (thất bại)";
 "menu.launchAtLogin.needsApproval" = "Mở khi đăng nhập (cần cho phép trong Cài đặt hệ thống)";
 "menu.quit" = "Thoát";
-"alert.enable.title" = "Ẩn tai thỏ";
-"alert.enable.message" = "Nền thanh menu trên màn hình có tai thỏ sẽ chuyển sang màu đen để hòa vào tai thỏ.";
-"alert.enable.confirm" = "Bật";
-"alert.enable.cancel" = "Hủy";
 "menu.showMenuBarIcon" = "Hiện biểu tượng trên thanh menu";
 "menu.roundedScreenCorners" = "Bo tròn góc màn hình";
+"alert.hiddenIcon.title" = "Biểu tượng HideNotch đã được ẩn.";
+"alert.hiddenIcon.message" = "Mở lại HideNotch từ Ứng dụng để hiện lại biểu tượng trên thanh menu.";
+"alert.hiddenIcon.confirm" = "OK";
+"alert.hiddenIcon.cancel" = "Hủy";

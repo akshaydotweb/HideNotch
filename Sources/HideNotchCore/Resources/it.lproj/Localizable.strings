@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "Apri al login (non riuscito)";
 "menu.launchAtLogin.needsApproval" = "Apri al login (approva in Impostazioni di Sistema)";
 "menu.quit" = "Esci";
-"alert.enable.title" = "Nascondi il notch";
-"alert.enable.message" = "Lo sfondo della barra dei menu degli schermi con notch diventerà nero per fondersi con il notch.";
-"alert.enable.confirm" = "Attiva";
-"alert.enable.cancel" = "Annulla";
 "menu.showMenuBarIcon" = "Mostra icona nella barra dei menu";
 "menu.roundedScreenCorners" = "Angoli dello schermo arrotondati";
+"alert.hiddenIcon.title" = "L’icona di HideNotch è ora nascosta.";
+"alert.hiddenIcon.message" = "Riapri HideNotch da Applicazioni per mostrare di nuovo l’icona nella barra dei menu.";
+"alert.hiddenIcon.confirm" = "OK";
+"alert.hiddenIcon.cancel" = "Annulla";

@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "Lancer à l'ouverture de session (échec)";
 "menu.launchAtLogin.needsApproval" = "Lancer à l'ouverture de session (à autoriser dans Réglages Système)";
 "menu.quit" = "Quitter";
-"alert.enable.title" = "Masquer l'encoche";
-"alert.enable.message" = "L'arrière-plan de la barre des menus des écrans à encoche deviendra noir pour se fondre avec l'encoche.";
-"alert.enable.confirm" = "Activer";
-"alert.enable.cancel" = "Annuler";
 "menu.showMenuBarIcon" = "Afficher l’icône dans la barre des menus";
 "menu.roundedScreenCorners" = "Coins arrondis de l’écran";
+"alert.hiddenIcon.title" = "L’icône HideNotch est maintenant masquée.";
+"alert.hiddenIcon.message" = "Ouvrez à nouveau HideNotch depuis Applications pour afficher l’icône dans la barre des menus.";
+"alert.hiddenIcon.confirm" = "OK";
+"alert.hiddenIcon.cancel" = "Annuler";

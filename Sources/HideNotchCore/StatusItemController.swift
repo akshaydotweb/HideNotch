@@ -8,7 +8,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     private let preferences: Preferences
     private let overlay: OverlayController
     private let loginItem: LoginItemControlling
-    private let confirmEnable: @MainActor () -> Bool
+    private let confirmHidingIcon: @MainActor () -> Bool
     private(set) var statusItem: NSStatusItem?
     private var loginItemFailed = false
 
@@ -20,12 +20,12 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
 
     public init(
         preferences: Preferences, overlay: OverlayController, loginItem: LoginItemControlling,
-        confirmEnable: @escaping @MainActor () -> Bool = StatusItemController.askToEnable
+        confirmHidingIcon: @escaping @MainActor () -> Bool = StatusItemController.explainHiddenIcon
     ) {
         self.preferences = preferences
         self.overlay = overlay
         self.loginItem = loginItem
-        self.confirmEnable = confirmEnable
+        self.confirmHidingIcon = confirmHidingIcon
         super.init()
 
         let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
@@ -59,6 +59,9 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     @objc func toggleMenuBarIcon() {
         preferences.showMenuBarIcon.toggle()
         syncMenuState()
+        if !preferences.showMenuBarIcon && !confirmHidingIcon() {
+            restoreMenuBarIcon()
+        }
     }
 
     /// Reopening the running app restores access to its controls.
@@ -73,23 +76,19 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
 
     @objc func toggleOverlay() {
         let enable = !preferences.overlayEnabled
-        if enable && !confirmEnable() {
-            syncMenuState()
-            return
-        }
         preferences.overlayEnabled = enable
         overlay.isEnabled = enable
         syncMenuState()
     }
 
     /// Activates the (accessory) app before presenting the alert, so it doesn't appear behind other windows.
-    public static func askToEnable() -> Bool {
+    public static func explainHiddenIcon() -> Bool {
         NSApplication.shared.activate()
         let alert = NSAlert()
-        alert.messageText = L10n.enableAlertTitle
-        alert.informativeText = L10n.enableAlertMessage
-        alert.addButton(withTitle: L10n.enableAlertConfirm)
-        alert.addButton(withTitle: L10n.enableAlertCancel)
+        alert.messageText = L10n.hiddenIconAlertTitle
+        alert.informativeText = L10n.hiddenIconAlertMessage
+        alert.addButton(withTitle: L10n.hiddenIconAlertConfirm)
+        alert.addButton(withTitle: L10n.hiddenIconAlertCancel)
         return alert.runModal() == .alertFirstButtonReturn
     }
 

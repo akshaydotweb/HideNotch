@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "Abrir ao iniciar sessão (falhou)";
 "menu.launchAtLogin.needsApproval" = "Abrir ao iniciar sessão (aprovar nos Ajustes do Sistema)";
 "menu.quit" = "Sair";
-"alert.enable.title" = "Ocultar o notch";
-"alert.enable.message" = "O fundo da barra de menus das telas com notch ficará preto para se fundir com o notch.";
-"alert.enable.confirm" = "Ativar";
-"alert.enable.cancel" = "Cancelar";
 "menu.showMenuBarIcon" = "Mostrar ícone na barra de menus";
 "menu.roundedScreenCorners" = "Cantos arredondados da tela";
+"alert.hiddenIcon.title" = "O ícone do HideNotch está oculto.";
+"alert.hiddenIcon.message" = "Abra o HideNotch novamente em Aplicativos para mostrar o ícone na barra de menus.";
+"alert.hiddenIcon.confirm" = "OK";
+"alert.hiddenIcon.cancel" = "Cancelar";

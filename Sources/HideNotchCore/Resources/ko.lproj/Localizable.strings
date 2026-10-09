@@ -3,9 +3,9 @@
 "menu.launchAtLogin.failed" = "로그인 시 실행(실패)";
 "menu.launchAtLogin.needsApproval" = "로그인 시 실행(시스템 설정에서 승인 필요)";
 "menu.quit" = "종료";
-"alert.enable.title" = "노치 숨기기";
-"alert.enable.message" = "노치가 있는 화면의 메뉴 막대 배경을 검은색으로 바꿔 노치와 하나로 보이게 합니다.";
-"alert.enable.confirm" = "켜기";
-"alert.enable.cancel" = "취소";
 "menu.showMenuBarIcon" = "메뉴 막대 아이콘 표시";
 "menu.roundedScreenCorners" = "화면 모서리 둥글게";
+"alert.hiddenIcon.title" = "HideNotch 아이콘이 숨겨졌습니다.";
+"alert.hiddenIcon.message" = "응용 프로그램에서 HideNotch를 다시 열면 메뉴 막대 아이콘이 다시 표시됩니다.";
+"alert.hiddenIcon.confirm" = "확인";
+"alert.hiddenIcon.cancel" = "취소";
