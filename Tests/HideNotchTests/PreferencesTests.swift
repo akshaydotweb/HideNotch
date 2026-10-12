@@ -20,6 +20,15 @@ struct PreferencesTests {
         defaults.removePersistentDomain(forName: suite)
     }
 
+    @Test func screensWithoutNotchAreExcludedByDefaultAndPreferencePersists() {
+        let defaults = makeDefaults()
+        let preferences = Preferences(defaults: defaults)
+        #expect(!preferences.screensWithoutNotchEnabled)
+        preferences.screensWithoutNotchEnabled = true
+        #expect(Preferences(defaults: defaults).screensWithoutNotchEnabled)
+        defaults.removePersistentDomain(forName: suite)
+    }
+
     @Test func overlayEnabledDefaultsToTrue() {
         #expect(Preferences(defaults: makeDefaults()).overlayEnabled)
     }

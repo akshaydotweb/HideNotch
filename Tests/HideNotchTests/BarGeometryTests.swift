@@ -20,6 +20,23 @@ struct BarGeometryTests {
         #expect(BarGeometry.barRect(for: m) == nil)
     }
 
+    @Test func includedScreenWithoutNotchCoversMenuBar() {
+        let m = ScreenMetrics(
+            frame: CGRect(x: 0, y: 0, width: 1920, height: 1080),
+            visibleFrame: CGRect(x: 0, y: 0, width: 1920, height: 1055),
+            safeAreaTop: 0)
+        #expect(BarGeometry.barRect(for: m, includingScreensWithoutNotch: true)
+            == CGRect(x: 0, y: 1055, width: 1920, height: 25))
+    }
+
+    @Test func includedScreenWithoutNotchOrMenuBarHasNoBar() {
+        let m = ScreenMetrics(
+            frame: CGRect(x: 0, y: 0, width: 1920, height: 1080),
+            visibleFrame: CGRect(x: 0, y: 0, width: 1920, height: 1080),
+            safeAreaTop: 0)
+        #expect(BarGeometry.barRect(for: m, includingScreensWithoutNotch: true) == nil)
+    }
+
     @Test func autoHiddenMenuBarUsesNotchHeight() {
         let m = ScreenMetrics(
             frame: CGRect(x: 0, y: 0, width: 1800, height: 1169),

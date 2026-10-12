@@ -14,6 +14,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
     public func applicationDidFinishLaunching(_ notification: Notification) {
         overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
+        overlay.screensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
         overlay.isEnabled = preferences.overlayEnabled
 
         let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem())

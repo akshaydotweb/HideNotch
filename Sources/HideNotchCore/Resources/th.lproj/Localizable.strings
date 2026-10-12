@@ -5,6 +5,7 @@
 "menu.quit" = "ออก";
 "menu.showMenuBarIcon" = "แสดงไอคอนในแถบเมนู";
 "menu.roundedScreenCorners" = "มุมหน้าจอโค้งมน";
+"menu.displaysWithoutNotch" = "รวมจอภาพที่ไม่มีรอยบาก";
 "alert.hiddenIcon.title" = "ซ่อนไอคอน HideNotch แล้ว";
 "alert.hiddenIcon.message" = "เปิด HideNotch อีกครั้งจากแอปพลิเคชันเพื่อแสดงไอคอนบนแถบเมนูอีกครั้ง";
 "alert.hiddenIcon.confirm" = "ตกลง";

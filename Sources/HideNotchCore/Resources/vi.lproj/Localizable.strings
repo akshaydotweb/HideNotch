@@ -5,6 +5,7 @@
 "menu.quit" = "Thoát";
 "menu.showMenuBarIcon" = "Hiện biểu tượng trên thanh menu";
 "menu.roundedScreenCorners" = "Bo tròn góc màn hình";
+"menu.displaysWithoutNotch" = "Bao gồm màn hình không có tai thỏ";
 "alert.hiddenIcon.title" = "Biểu tượng HideNotch đã được ẩn.";
 "alert.hiddenIcon.message" = "Mở lại HideNotch từ Ứng dụng để hiện lại biểu tượng trên thanh menu.";
 "alert.hiddenIcon.confirm" = "OK";

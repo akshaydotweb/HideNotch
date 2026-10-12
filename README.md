@@ -5,7 +5,7 @@ A macOS menu-bar utility that paints the menu bar area on notched screens pure b
 ## Requirements
 
 - macOS 26 or later
-- A MacBook with a notched built-in display (external, non-notched displays are unaffected)
+- A MacBook with a notched built-in display (other displays are unaffected unless you include them)
 
 ## Installation
 
@@ -19,6 +19,7 @@ Click the menu-bar icon to see the following menu items:
 
 - **Hide Notch**: toggles the black bar overlay. The checkmark reflects whether it's currently active. Changes apply immediately without a confirmation prompt. Enabling it also turns off “Show menu bar background” in System Settings so the system background does not cover the overlay. If you turn the system background back on, HideNotch switches off automatically within a second, removes its overlay without animation, restores the menu-bar icon, and explains which setting is required. HideNotch leaves that setting unchanged when disabled or closed. This uses an undocumented macOS API.
 - **Rounded Screen Corners**: toggles the 16-point black corner masks below the menu bar and at the bottom of the screen, animating the radius over 0.6 seconds. Enabled by default; the setting persists across restarts. The corners appear when Hide Notch is active.
+- **Include Displays Without Notch**: also paints the menu bar and corners black on displays without a notch, such as external monitors. Off by default; the setting persists across restarts. Displays without a visible menu bar (auto-hidden, or secondary displays when “Displays have separate Spaces” is off) stay uncovered.
 - **Launch at Login**: when checked, the app starts automatically at login. If the system requires approval in System Settings, the menu shows "Launch at Login (Approve in System Settings)"; clicking it again opens the corresponding System Settings page.
 - **Show Menu Bar Icon**: uncheck to hide the icon while keeping the overlay active. A dialog explains how to restore it; Cancel brings it back immediately. Open HideNotch again from Applications, Spotlight, or `open ~/Applications/HideNotch.app` to restore the icon and access the menu. The setting persists across restarts and launch at login.
 - **Quit**: plays the reverse reveal animation, then quits the app.
@@ -32,7 +33,6 @@ The interface is localized into 11 languages: English (default/fallback), Japane
 - **Lock screen / wake-from-sleep unlock screen**: not handled, the notch is briefly visible — the lock screen does not composite application windows from the current user session.
 - **First login screen after reboot (with FileVault enabled)**: not handled, that screen runs in the pre-unlock boot environment where third-party code cannot run.
 - **Logout / switch-user login window**: not implemented in v1 (would require installing a pre-login agent that needs administrator privileges).
-- **Resolutions / external displays without a notch**: intentionally not handled (nothing to hide without a notch).
 
 ## Building from Source
 

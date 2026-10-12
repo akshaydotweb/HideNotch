@@ -78,6 +78,19 @@ struct OverlayControllerTests {
         #expect(factory.made[0].menuBarHeight == 39)
     }
 
+    @Test func includingScreensWithoutNotchShowsBarOnEveryScreen() {
+        screens.list = [Screens.notched, Screens.external]
+        let controller = makeController()
+        controller.isEnabled = true
+        controller.screensWithoutNotchEnabled = true
+        #expect(controller.windows.count == 2)
+        #expect(factory.made[1].frame == Screens.external.frame)
+        #expect(factory.made[1].menuBarHeight == 25)
+        controller.screensWithoutNotchEnabled = false
+        #expect(controller.windows.count == 1)
+        #expect(!factory.made[1].isShown)
+    }
+
     @Test func refreshWhileDisabledCreatesNothing() {
         screens.list = [Screens.notched]
         let controller = makeController()

@@ -16,6 +16,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     let menu = NSMenu()
     let overlayItem = NSMenuItem(title: L10n.hideNotch, action: #selector(toggleOverlay), keyEquivalent: "")
     let cornersMenuItem = NSMenuItem(title: L10n.roundedScreenCorners, action: #selector(toggleRoundedCorners), keyEquivalent: "")
+    let screensWithoutNotchMenuItem = NSMenuItem(title: L10n.displaysWithoutNotch, action: #selector(toggleScreensWithoutNotch), keyEquivalent: "")
     let loginMenuItem = NSMenuItem(title: L10n.launchAtLogin, action: #selector(toggleLoginItem), keyEquivalent: "")
     let iconMenuItem = NSMenuItem(title: L10n.showMenuBarIcon, action: #selector(toggleMenuBarIcon), keyEquivalent: "")
 
@@ -32,11 +33,12 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         super.init()
 
         let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
-        for item in [overlayItem, cornersMenuItem, loginMenuItem, iconMenuItem, quitItem] {
+        for item in [overlayItem, cornersMenuItem, screensWithoutNotchMenuItem, loginMenuItem, iconMenuItem, quitItem] {
             item.target = self
         }
         menu.addItem(overlayItem)
         menu.addItem(cornersMenuItem)
+        menu.addItem(screensWithoutNotchMenuItem)
         menu.addItem(loginMenuItem)
         menu.addItem(iconMenuItem)
         menu.addItem(.separator())
@@ -56,6 +58,12 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     @objc func toggleRoundedCorners() {
         preferences.roundedCornersEnabled.toggle()
         overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
+        syncMenuState()
+    }
+
+    @objc func toggleScreensWithoutNotch() {
+        preferences.screensWithoutNotchEnabled.toggle()
+        overlay.screensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
         syncMenuState()
     }
 
@@ -135,6 +143,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
 
     private func syncMenuState() {
         cornersMenuItem.state = preferences.roundedCornersEnabled ? .on : .off
+        screensWithoutNotchMenuItem.state = preferences.screensWithoutNotchEnabled ? .on : .off
         iconMenuItem.state = preferences.showMenuBarIcon ? .on : .off
         statusItem?.isVisible = preferences.showMenuBarIcon
         overlayItem.state = preferences.overlayEnabled ? .on : .off

@@ -15,7 +15,7 @@ public struct SystemScreens: ScreenProviding {
     }
 }
 
-/// Keeps one screen mask per notched screen in sync with the current screen layout.
+/// Keeps one screen mask per covered screen in sync with the current screen layout.
 @MainActor
 public final class OverlayController {
     private let screens: ScreenProviding
@@ -32,6 +32,10 @@ public final class OverlayController {
     }
 
     public var roundedCornersEnabled = true {
+        didSet { refresh() }
+    }
+
+    public var screensWithoutNotchEnabled = false {
         didSet { refresh() }
     }
 
@@ -69,7 +73,8 @@ public final class OverlayController {
             return
         }
         let layouts = screens.currentScreens().compactMap { screen -> (frame: CGRect, menuBarHeight: CGFloat)? in
-            guard let bar = BarGeometry.barRect(for: screen) else { return nil }
+            guard let bar = BarGeometry.barRect(
+                for: screen, includingScreensWithoutNotch: screensWithoutNotchEnabled) else { return nil }
             return (screen.frame, bar.height)
         }
         while windows.count > layouts.count {

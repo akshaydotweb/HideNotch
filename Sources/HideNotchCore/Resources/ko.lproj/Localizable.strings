@@ -5,6 +5,7 @@
 "menu.quit" = "종료";
 "menu.showMenuBarIcon" = "메뉴 막대 아이콘 표시";
 "menu.roundedScreenCorners" = "화면 모서리 둥글게";
+"menu.displaysWithoutNotch" = "노치 없는 디스플레이에도 적용";
 "alert.hiddenIcon.title" = "HideNotch 아이콘이 숨겨졌습니다.";
 "alert.hiddenIcon.message" = "응용 프로그램에서 HideNotch를 다시 열면 메뉴 막대 아이콘이 다시 표시됩니다.";
 "alert.hiddenIcon.confirm" = "확인";

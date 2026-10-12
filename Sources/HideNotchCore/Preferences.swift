@@ -4,6 +4,7 @@ public final class Preferences {
     static let overlayEnabledKey = "overlayEnabled"
     static let showMenuBarIconKey = "showMenuBarIcon"
     static let roundedCornersEnabledKey = "roundedCornersEnabled"
+    static let screensWithoutNotchEnabledKey = "screensWithoutNotchEnabled"
 
     private let defaults: UserDefaults
 
@@ -29,5 +30,10 @@ public final class Preferences {
     public var roundedCornersEnabled: Bool {
         get { defaults.bool(forKey: Self.roundedCornersEnabledKey) }
         set { defaults.set(newValue, forKey: Self.roundedCornersEnabledKey) }
+    }
+
+    public var screensWithoutNotchEnabled: Bool {
+        get { defaults.bool(forKey: Self.screensWithoutNotchEnabledKey) }
+        set { defaults.set(newValue, forKey: Self.screensWithoutNotchEnabledKey) }
     }
 }

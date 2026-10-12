@@ -27,8 +27,8 @@ struct StatusItemControllerTests {
 
     @Test func menuHasToggleLoginAndQuit() {
         let (sut, _, _) = makeSUT()
-        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.roundedScreenCorners, L10n.launchAtLogin, L10n.showMenuBarIcon, "", L10n.quit])
-        #expect(sut.menu.items[4].isSeparatorItem)
+        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.roundedScreenCorners, L10n.displaysWithoutNotch, L10n.launchAtLogin, L10n.showMenuBarIcon, "", L10n.quit])
+        #expect(sut.menu.items[5].isSeparatorItem)
     }
 
     @Test(arguments: [true, false])
@@ -54,6 +54,15 @@ struct StatusItemControllerTests {
             #expect(factory.made.count == 1)
             #expect(factory.made[0].roundedCornersEnabled)
         }
+    }
+
+    @Test func togglingScreensWithoutNotchUpdatesPreferenceOverlayAndMenu() {
+        let (sut, prefs, overlay) = makeSUT()
+        screens.list = [Screens.notched, Screens.external]
+        sut.toggleScreensWithoutNotch()
+        #expect(prefs.screensWithoutNotchEnabled)
+        #expect(overlay.windows.count == 2)
+        #expect(sut.screensWithoutNotchMenuItem.state == .on)
     }
 
     @Test func hidingIconKeepsOverlayEnabledAndReopeningRestoresAccess() {

@@ -5,6 +5,7 @@
 "menu.quit" = "Beenden";
 "menu.showMenuBarIcon" = "Symbol in der Menüleiste anzeigen";
 "menu.roundedScreenCorners" = "Abgerundete Bildschirmecken";
+"menu.displaysWithoutNotch" = "Displays ohne Notch einbeziehen";
 "alert.hiddenIcon.title" = "Das HideNotch-Symbol ist jetzt ausgeblendet.";
 "alert.hiddenIcon.message" = "Öffne HideNotch erneut aus Programme, um das Symbol in der Menüleiste wieder anzuzeigen.";
 "alert.hiddenIcon.confirm" = "OK";

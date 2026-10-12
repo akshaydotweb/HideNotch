@@ -5,6 +5,7 @@
 "menu.quit" = "Quit";
 "menu.showMenuBarIcon" = "Show Menu Bar Icon";
 "menu.roundedScreenCorners" = "Rounded Screen Corners";
+"menu.displaysWithoutNotch" = "Include Displays Without Notch";
 "alert.hiddenIcon.title" = "HideNotch icon is now hidden.";
 "alert.hiddenIcon.message" = "Reopen HideNotch from Applications to show the menu bar icon again.";
 "alert.hiddenIcon.confirm" = "OK";

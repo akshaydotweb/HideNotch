@@ -5,6 +5,7 @@
 "menu.quit" = "Sair";
 "menu.showMenuBarIcon" = "Mostrar ícone na barra de menus";
 "menu.roundedScreenCorners" = "Cantos arredondados da tela";
+"menu.displaysWithoutNotch" = "Incluir telas sem entalhe";
 "alert.hiddenIcon.title" = "O ícone do HideNotch está oculto.";
 "alert.hiddenIcon.message" = "Abra o HideNotch novamente em Aplicativos para mostrar o ícone na barra de menus.";
 "alert.hiddenIcon.confirm" = "OK";
