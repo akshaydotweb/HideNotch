@@ -10,6 +10,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     private let loginItem: LoginItemControlling
     private let confirmHidingIcon: @MainActor () -> Bool
     private let informSystemBackground: @MainActor () -> Void
+    private let informDisallowedIcon: @MainActor () -> Void
     private(set) var statusItem: NSStatusItem?
     private var loginItemFailed = false
 
@@ -23,13 +24,15 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     public init(
         preferences: Preferences, overlay: OverlayController, loginItem: LoginItemControlling,
         confirmHidingIcon: @escaping @MainActor () -> Bool = StatusItemController.explainHiddenIcon,
-        informSystemBackground: @escaping @MainActor () -> Void = StatusItemController.explainSystemBackground
+        informSystemBackground: @escaping @MainActor () -> Void = StatusItemController.explainSystemBackground,
+        informDisallowedIcon: @escaping @MainActor () -> Void = StatusItemController.explainDisallowedIcon
     ) {
         self.preferences = preferences
         self.overlay = overlay
         self.loginItem = loginItem
         self.confirmHidingIcon = confirmHidingIcon
         self.informSystemBackground = informSystemBackground
+        self.informDisallowedIcon = informDisallowedIcon
         super.init()
 
         let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
@@ -85,6 +88,17 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         syncMenuState()
     }
 
+    /// macOS doesn't expose "Allow in the Menu Bar", but a disallowed icon's window never becomes visible.
+    public func checkIconVisibility(after delay: Duration = .seconds(1)) {
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: delay)
+            guard let self, self.preferences.showMenuBarIcon,
+                  let window = self.statusItem?.button?.window,
+                  !window.occlusionState.contains(.visible) else { return }
+            self.informDisallowedIcon()
+        }
+    }
+
     @objc func toggleOverlay() {
         let enable = !preferences.overlayEnabled
         preferences.overlayEnabled = enable
@@ -108,6 +122,19 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         alert.informativeText = L10n.systemBackgroundAlertMessage
         alert.addButton(withTitle: L10n.hiddenIconAlertConfirm)
         alert.runModal()
+    }
+
+    public static func explainDisallowedIcon() {
+        NSApplication.shared.activate()
+        let alert = NSAlert()
+        alert.messageText = L10n.disallowedIconAlertTitle
+        alert.informativeText = L10n.disallowedIconAlertMessage
+        alert.addButton(withTitle: L10n.disallowedIconAlertOpenSettings)
+        alert.addButton(withTitle: L10n.hiddenIconAlertConfirm)
+        if alert.runModal() == .alertFirstButtonReturn,
+           let url = URL(string: "x-apple.systempreferences:com.apple.ControlCenter-Settings.extension") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     /// Activates the (accessory) app before presenting the alert, so it doesn't appear behind other windows.

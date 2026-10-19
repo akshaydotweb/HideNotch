@@ -12,3 +12,6 @@
 "alert.hiddenIcon.cancel" = "Batal";
 "alert.systemBackground.title" = "Hide Notch telah dinonaktifkan.";
 "alert.systemBackground.message" = "Hide Notch memerlukan “Tampilkan latar belakang bar menu” dinonaktifkan. Kami akan menonaktifkannya saat Anda menyembunyikan notch lagi.";
+"alert.disallowedIcon.title" = "Ikon bar menu HideNotch tidak terlihat.";
+"alert.disallowedIcon.message" = "Nyalakan HideNotch di “Izinkan di Bar Menu” pada pengaturan Bar Menu. Jika sudah menyala, bar menu mungkin terlalu penuh untuk menampilkannya.";
+"alert.disallowedIcon.openSettings" = "Buka Pengaturan Bar Menu";

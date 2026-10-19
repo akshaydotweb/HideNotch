@@ -12,3 +12,6 @@
 "alert.hiddenIcon.cancel" = "Abbrechen";
 "alert.systemBackground.title" = "Hide Notch wurde ausgeschaltet.";
 "alert.systemBackground.message" = "Für Hide Notch muss „Hintergrund der Menüleiste anzeigen“ ausgeschaltet sein. Wir schalten es für dich aus, wenn du die Notch erneut ausblendest.";
+"alert.disallowedIcon.title" = "Das Menüleistensymbol von HideNotch ist nicht sichtbar.";
+"alert.disallowedIcon.message" = "Aktiviere HideNotch unter „In der Menüleiste erlauben“ in den Menüleisten-Einstellungen. Ist es bereits aktiviert, ist die Menüleiste möglicherweise zu voll, um es anzuzeigen.";
+"alert.disallowedIcon.openSettings" = "Menüleisten-Einstellungen öffnen";

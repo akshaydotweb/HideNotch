@@ -12,3 +12,6 @@
 "alert.hiddenIcon.cancel" = "Cancel";
 "alert.systemBackground.title" = "Hide Notch has been turned off.";
 "alert.systemBackground.message" = "Hide Notch requires “Show menu bar background” to be off. We’ll turn it off for you when you hide the notch again.";
+"alert.disallowedIcon.title" = "HideNotch’s menu bar icon isn’t visible.";
+"alert.disallowedIcon.message" = "Turn on HideNotch under “Allow in the Menu Bar” in Menu Bar settings. If it’s already on, the menu bar may be too full to show it.";
+"alert.disallowedIcon.openSettings" = "Open Menu Bar Settings";

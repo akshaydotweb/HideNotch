@@ -19,6 +19,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem())
         status.install()
+        status.checkIconVisibility()
         statusController = status
 
         // SkyLight's private notification does not reliably arrive across processes.
@@ -62,6 +63,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
     public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         statusController?.restoreMenuBarIcon()
+        statusController?.checkIconVisibility()
         return false
     }
 

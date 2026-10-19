@@ -8,6 +8,7 @@ public enum L10n {
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit",
         "alert.systemBackground.title", "alert.systemBackground.message",
         "alert.hiddenIcon.title", "alert.hiddenIcon.message", "alert.hiddenIcon.confirm", "alert.hiddenIcon.cancel",
+        "alert.disallowedIcon.title", "alert.disallowedIcon.message", "alert.disallowedIcon.openSettings",
     ]
 
     static var hideNotch: String { tr("menu.hideNotch") }
@@ -24,6 +25,10 @@ public enum L10n {
     static var hiddenIconAlertMessage: String { tr("alert.hiddenIcon.message") }
     static var hiddenIconAlertConfirm: String { tr("alert.hiddenIcon.confirm") }
     static var hiddenIconAlertCancel: String { tr("alert.hiddenIcon.cancel") }
+
+    static var disallowedIconAlertTitle: String { tr("alert.disallowedIcon.title") }
+    static var disallowedIconAlertMessage: String { tr("alert.disallowedIcon.message") }
+    static var disallowedIconAlertOpenSettings: String { tr("alert.disallowedIcon.openSettings") }
 
     static func tr(_ key: String, bundle: Bundle = .module) -> String {
         bundle.localizedString(forKey: key, value: nil, table: nil)

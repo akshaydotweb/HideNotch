@@ -12,3 +12,6 @@
 "alert.hiddenIcon.cancel" = "Cancelar";
 "alert.systemBackground.title" = "Hide Notch se ha desactivado.";
 "alert.systemBackground.message" = "Hide Notch necesita que «Mostrar fondo de la barra de menús» esté desactivado. Lo desactivaremos cuando vuelvas a ocultar el notch.";
+"alert.disallowedIcon.title" = "El icono de HideNotch no está visible en la barra de menús.";
+"alert.disallowedIcon.message" = "Activa HideNotch en “Permitir en la barra de menús” en los ajustes de Barra de menús. Si ya está activado, puede que la barra de menús esté demasiado llena para mostrarlo.";
+"alert.disallowedIcon.openSettings" = "Abrir ajustes de Barra de menús";
