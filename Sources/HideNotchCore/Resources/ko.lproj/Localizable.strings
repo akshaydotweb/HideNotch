@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "로그인 시 실행";
 "menu.launchAtLogin.failed" = "로그인 시 실행(실패)";
 "menu.launchAtLogin.needsApproval" = "로그인 시 실행(시스템 설정에서 승인 필요)";
+"panel.description" = "메뉴 막대를 검게 칠해 노치가 눈에 띄지 않게 합니다.";
 "menu.quit" = "종료";
 "menu.showMenuBarIcon" = "메뉴 막대 아이콘 표시";
 "menu.roundedScreenCorners" = "화면 모서리 둥글게";

@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "Abrir al iniciar sesión";
 "menu.launchAtLogin.failed" = "Abrir al iniciar sesión (error)";
 "menu.launchAtLogin.needsApproval" = "Abrir al iniciar sesión (aprobar en Ajustes del Sistema)";
+"panel.description" = "Pinta la barra de menús de negro para que el notch se integre.";
 "menu.quit" = "Salir";
 "menu.showMenuBarIcon" = "Mostrar icono en la barra de menús";
 "menu.roundedScreenCorners" = "Esquinas redondeadas de la pantalla";

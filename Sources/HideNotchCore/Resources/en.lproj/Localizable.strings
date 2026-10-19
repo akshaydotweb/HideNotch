@@ -2,10 +2,11 @@
 "menu.launchAtLogin" = "Launch at Login";
 "menu.launchAtLogin.failed" = "Launch at Login (Failed)";
 "menu.launchAtLogin.needsApproval" = "Launch at Login (Approve in System Settings)";
+"panel.description" = "Paints the menu bar black so the notch blends in.";
 "menu.quit" = "Quit";
 "menu.showMenuBarIcon" = "Show Menu Bar Icon";
-"menu.roundedScreenCorners" = "Rounded Screen Corners";
-"menu.displaysWithoutNotch" = "Include Displays Without Notch";
+"menu.roundedScreenCorners" = "Rounded screen corners";
+"menu.displaysWithoutNotch" = "Include displays without notch";
 "alert.hiddenIcon.title" = "HideNotch icon is now hidden.";
 "alert.hiddenIcon.message" = "Reopen HideNotch from Applications to show the menu bar icon again.";
 "alert.hiddenIcon.confirm" = "OK";

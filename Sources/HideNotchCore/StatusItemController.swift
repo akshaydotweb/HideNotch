@@ -1,25 +1,30 @@
 import AppKit
+import Observation
 import os
+import SwiftUI
 
 @MainActor
-public final class StatusItemController: NSObject, NSMenuDelegate {
-    private static let log = Logger(subsystem: "com.leether.HideNotch", category: "StatusItem")
+@Observable
+public final class StatusItemController: NSObject, NSPopoverDelegate {
+    @ObservationIgnored private static let log = Logger(subsystem: "com.leether.HideNotch", category: "StatusItem")
 
-    private let preferences: Preferences
-    private let overlay: OverlayController
-    private let loginItem: LoginItemControlling
-    private let confirmHidingIcon: @MainActor () -> Bool
-    private let informSystemBackground: @MainActor () -> Void
-    private let informDisallowedIcon: @MainActor () -> Void
-    private(set) var statusItem: NSStatusItem?
+    @ObservationIgnored private let preferences: Preferences
+    @ObservationIgnored private let overlay: OverlayController
+    @ObservationIgnored private let loginItem: LoginItemControlling
+    @ObservationIgnored private let confirmHidingIcon: @MainActor () -> Bool
+    @ObservationIgnored private let informSystemBackground: @MainActor () -> Void
+    @ObservationIgnored private let informDisallowedIcon: @MainActor () -> Void
+    @ObservationIgnored private(set) var statusItem: NSStatusItem?
+    @ObservationIgnored let popover = NSPopover()
+    @ObservationIgnored private var outsideClickMonitor: Any?
     private var loginItemFailed = false
 
-    let menu = NSMenu()
-    let overlayItem = NSMenuItem(title: L10n.hideNotch, action: #selector(toggleOverlay), keyEquivalent: "")
-    let cornersMenuItem = NSMenuItem(title: L10n.roundedScreenCorners, action: #selector(toggleRoundedCorners), keyEquivalent: "")
-    let screensWithoutNotchMenuItem = NSMenuItem(title: L10n.displaysWithoutNotch, action: #selector(toggleScreensWithoutNotch), keyEquivalent: "")
-    let loginMenuItem = NSMenuItem(title: L10n.launchAtLogin, action: #selector(toggleLoginItem), keyEquivalent: "")
-    let iconMenuItem = NSMenuItem(title: L10n.showMenuBarIcon, action: #selector(toggleMenuBarIcon), keyEquivalent: "")
+    private(set) var isOverlayEnabled = false
+    private(set) var isRoundedCornersEnabled = false
+    private(set) var isScreensWithoutNotchEnabled = false
+    private(set) var isMenuBarIconShown = false
+    private(set) var isLaunchAtLoginEnabled = false
+    private(set) var launchAtLoginTitle = L10n.launchAtLogin
 
     public init(
         preferences: Preferences, overlay: OverlayController, loginItem: LoginItemControlling,
@@ -35,44 +40,64 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         self.informDisallowedIcon = informDisallowedIcon
         super.init()
 
-        let quitItem = NSMenuItem(title: L10n.quit, action: #selector(quit), keyEquivalent: "q")
-        for item in [overlayItem, cornersMenuItem, screensWithoutNotchMenuItem, loginMenuItem, iconMenuItem, quitItem] {
-            item.target = self
-        }
-        menu.addItem(overlayItem)
-        menu.addItem(cornersMenuItem)
-        menu.addItem(screensWithoutNotchMenuItem)
-        menu.addItem(loginMenuItem)
-        menu.addItem(iconMenuItem)
-        menu.addItem(.separator())
-        menu.addItem(quitItem)
-        menu.delegate = self
-        syncMenuState()
+        popover.behavior = .transient
+        popover.delegate = self
+        let content = NSHostingController(rootView: SettingsView(controller: self))
+        content.sizingOptions = .preferredContentSize
+        popover.contentViewController = content
+        syncState()
     }
 
     public func install() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.button?.image = NotchIcon.menuBarImage()
-        item.menu = menu
+        item.button?.target = self
+        item.button?.action = #selector(togglePopover)
         statusItem = item
-        syncMenuState()
+        syncState()
     }
 
-    @objc func toggleRoundedCorners() {
+    @objc private func togglePopover() {
+        guard let button = statusItem?.button else { return }
+        if popover.isShown {
+            popover.performClose(nil)
+        } else {
+            // The cooperative activate() is refused while another app is frontmost.
+            NSApplication.shared.activate(ignoringOtherApps: true)
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            popover.contentViewController?.view.window?.makeKey()
+            // macOS may refuse to activate an accessory app, and then .transient misses clicks in other apps.
+            outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+                MainActor.assumeIsolated { self?.popover.performClose(nil) }
+            }
+        }
+    }
+
+    public func popoverWillShow(_ notification: Notification) {
+        syncState()
+    }
+
+    public func popoverDidClose(_ notification: Notification) {
+        if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
+        outsideClickMonitor = nil
+    }
+
+    func toggleRoundedCorners() {
         preferences.roundedCornersEnabled.toggle()
         overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
-        syncMenuState()
+        syncState()
     }
 
-    @objc func toggleScreensWithoutNotch() {
+    func toggleScreensWithoutNotch() {
         preferences.screensWithoutNotchEnabled.toggle()
         overlay.screensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
-        syncMenuState()
+        syncState()
     }
 
-    @objc func toggleMenuBarIcon() {
+    func toggleMenuBarIcon() {
+        popover.close()
         preferences.showMenuBarIcon.toggle()
-        syncMenuState()
+        syncState()
         if !preferences.showMenuBarIcon && !confirmHidingIcon() {
             restoreMenuBarIcon()
         }
@@ -81,11 +106,7 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     /// Reopening the running app restores access to its controls.
     public func restoreMenuBarIcon() {
         preferences.showMenuBarIcon = true
-        syncMenuState()
-    }
-
-    public func menuWillOpen(_ menu: NSMenu) {
-        syncMenuState()
+        syncState()
     }
 
     /// macOS doesn't expose "Allow in the Menu Bar", but a disallowed icon's window never becomes visible.
@@ -99,11 +120,11 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         }
     }
 
-    @objc func toggleOverlay() {
+    func toggleOverlay() {
         let enable = !preferences.overlayEnabled
         preferences.overlayEnabled = enable
         overlay.isEnabled = enable
-        syncMenuState()
+        syncState()
     }
 
     /// Stops hiding the notch when the system background would cover the overlay.
@@ -148,10 +169,10 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
         return alert.runModal() == .alertFirstButtonReturn
     }
 
-    @objc func toggleLoginItem() {
+    func toggleLoginItem() {
         if loginItem.state == .requiresApproval {
             loginItem.openSystemSettings()
-            syncMenuState()
+            syncState()
             return
         }
         do {
@@ -161,26 +182,26 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
             loginItemFailed = true
             Self.log.error("Login item update failed: \(error.localizedDescription, privacy: .public)")
         }
-        syncMenuState()
+        syncState()
     }
 
-    @objc private func quit() {
+    func quit() {
         NSApplication.shared.terminate(nil)
     }
 
-    private func syncMenuState() {
-        cornersMenuItem.state = preferences.roundedCornersEnabled ? .on : .off
-        screensWithoutNotchMenuItem.state = preferences.screensWithoutNotchEnabled ? .on : .off
-        iconMenuItem.state = preferences.showMenuBarIcon ? .on : .off
+    private func syncState() {
+        isOverlayEnabled = preferences.overlayEnabled
+        isRoundedCornersEnabled = preferences.roundedCornersEnabled
+        isScreensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
+        isMenuBarIconShown = preferences.showMenuBarIcon
         statusItem?.isVisible = preferences.showMenuBarIcon
-        overlayItem.state = preferences.overlayEnabled ? .on : .off
-        loginMenuItem.state = loginItem.state == .enabled ? .on : .off
+        isLaunchAtLoginEnabled = loginItem.state == .enabled
         if loginItemFailed {
-            loginMenuItem.title = L10n.launchAtLoginFailed
+            launchAtLoginTitle = L10n.launchAtLoginFailed
         } else if loginItem.state == .requiresApproval {
-            loginMenuItem.title = L10n.launchAtLoginNeedsApproval
+            launchAtLoginTitle = L10n.launchAtLoginNeedsApproval
         } else {
-            loginMenuItem.title = L10n.launchAtLogin
+            launchAtLoginTitle = L10n.launchAtLogin
         }
     }
 }

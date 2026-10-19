@@ -25,12 +25,6 @@ struct StatusItemControllerTests {
         return (sut, prefs, overlay)
     }
 
-    @Test func menuHasToggleLoginAndQuit() {
-        let (sut, _, _) = makeSUT()
-        #expect(sut.menu.items.map(\.title) == [L10n.hideNotch, L10n.roundedScreenCorners, L10n.displaysWithoutNotch, L10n.launchAtLogin, L10n.showMenuBarIcon, "", L10n.quit])
-        #expect(sut.menu.items[5].isSeparatorItem)
-    }
-
     @Test(arguments: [true, false])
     func togglingCornersUpdatesPreferenceAndOverlayWithoutEnablingIt(overlayEnabled: Bool) {
         let (sut, prefs, overlay) = makeSUT(overlayEnabled: overlayEnabled)
@@ -38,7 +32,7 @@ struct StatusItemControllerTests {
         #expect(!prefs.roundedCornersEnabled)
         #expect(!overlay.roundedCornersEnabled)
         #expect(overlay.isEnabled == overlayEnabled)
-        #expect(sut.cornersMenuItem.state == .off)
+        #expect(!sut.isRoundedCornersEnabled)
         if overlayEnabled {
             #expect(factory.made.count == 1)
             #expect(!factory.made[0].roundedCornersEnabled)
@@ -49,20 +43,20 @@ struct StatusItemControllerTests {
         sut.toggleRoundedCorners()
         #expect(prefs.roundedCornersEnabled)
         #expect(overlay.roundedCornersEnabled)
-        #expect(sut.cornersMenuItem.state == .on)
+        #expect(sut.isRoundedCornersEnabled)
         if overlayEnabled {
             #expect(factory.made.count == 1)
             #expect(factory.made[0].roundedCornersEnabled)
         }
     }
 
-    @Test func togglingScreensWithoutNotchUpdatesPreferenceOverlayAndMenu() {
+    @Test func togglingScreensWithoutNotchUpdatesPreferenceOverlayAndState() {
         let (sut, prefs, overlay) = makeSUT()
         screens.list = [Screens.notched, Screens.external]
         sut.toggleScreensWithoutNotch()
         #expect(prefs.screensWithoutNotchEnabled)
         #expect(overlay.windows.count == 2)
-        #expect(sut.screensWithoutNotchMenuItem.state == .on)
+        #expect(sut.isScreensWithoutNotchEnabled)
     }
 
     @Test func hidingIconKeepsOverlayEnabledAndReopeningRestoresAccess() {
@@ -76,13 +70,13 @@ struct StatusItemControllerTests {
         #expect(confirm.calls == 1)
         #expect(!prefs.showMenuBarIcon)
         #expect(sut.statusItem?.isVisible == false)
-        #expect(sut.iconMenuItem.state == .off)
+        #expect(!sut.isMenuBarIconShown)
         #expect(overlay.isEnabled)
 
         sut.restoreMenuBarIcon()
         #expect(prefs.showMenuBarIcon)
         #expect(sut.statusItem?.isVisible == true)
-        #expect(sut.iconMenuItem.state == .on)
+        #expect(sut.isMenuBarIconShown)
     }
 
     @Test func installingHonorsHiddenIconPreference() {
@@ -93,41 +87,41 @@ struct StatusItemControllerTests {
             if let item = sut.statusItem { NSStatusBar.system.removeStatusItem(item) }
         }
         #expect(sut.statusItem?.isVisible == false)
-        #expect(sut.iconMenuItem.state == .off)
+        #expect(!sut.isMenuBarIconShown)
     }
 
-    @Test func menuReflectsDisabledPreference() {
+    @Test func stateReflectsDisabledPreference() {
         let (sut, _, overlay) = makeSUT(overlayEnabled: false)
-        #expect(sut.overlayItem.state == .off)
+        #expect(!sut.isOverlayEnabled)
         #expect(overlay.windows.isEmpty)
     }
 
-    @Test func toggleOverlayUpdatesPreferenceOverlayAndMenu() {
+    @Test func toggleOverlayUpdatesPreferenceOverlayAndState() {
         let (sut, prefs, overlay) = makeSUT()
-        #expect(sut.overlayItem.state == .on)
+        #expect(sut.isOverlayEnabled)
         sut.toggleOverlay()
         #expect(!prefs.overlayEnabled)
         #expect(!overlay.isEnabled)
         #expect(overlay.windows.isEmpty)
-        #expect(sut.overlayItem.state == .off)
+        #expect(!sut.isOverlayEnabled)
         #expect(confirm.calls == 0)
     }
 
-    @Test func systemBackgroundDisablesOverlayAndPersistsMenuState() {
+    @Test func systemBackgroundDisablesOverlayAndPersistsState() {
         let (sut, prefs, overlay) = makeSUT()
         prefs.showMenuBarIcon = false
         factory.made[0].delaysHide = true
         sut.disableOverlayForSystemBackground()
         #expect(!factory.made[0].isShown)
         #expect(prefs.showMenuBarIcon)
-        #expect(sut.iconMenuItem.state == .on)
+        #expect(sut.isMenuBarIconShown)
         #expect(backgroundAlert.calls == 1)
         sut.disableOverlayForSystemBackground()
         #expect(backgroundAlert.calls == 1)
         #expect(!prefs.overlayEnabled)
         #expect(!overlay.isEnabled)
         #expect(overlay.windows.isEmpty)
-        #expect(sut.overlayItem.state == .off)
+        #expect(!sut.isOverlayEnabled)
         #expect(confirm.calls == 0)
     }
 
@@ -137,7 +131,7 @@ struct StatusItemControllerTests {
         sut.toggleMenuBarIcon()
         #expect(confirm.calls == 1)
         #expect(prefs.showMenuBarIcon)
-        #expect(sut.iconMenuItem.state == .on)
+        #expect(sut.isMenuBarIconShown)
         #expect(overlay.isEnabled)
     }
 
@@ -147,15 +141,15 @@ struct StatusItemControllerTests {
         #expect(confirm.calls == 0)
         #expect(prefs.overlayEnabled)
         #expect(overlay.windows.count == 1)
-        #expect(sut.overlayItem.state == .on)
+        #expect(sut.isOverlayEnabled)
     }
 
     @Test func toggleLoginItemEnables() {
         let (sut, _, _) = makeSUT()
         sut.toggleLoginItem()
         #expect(login.state == .enabled)
-        #expect(sut.loginMenuItem.state == .on)
-        #expect(sut.loginMenuItem.title == L10n.launchAtLogin)
+        #expect(sut.isLaunchAtLoginEnabled)
+        #expect(sut.launchAtLoginTitle == L10n.launchAtLogin)
     }
 
     @Test func loginItemFailureIsShown() {
@@ -163,8 +157,8 @@ struct StatusItemControllerTests {
         login.shouldFail = true
         sut.toggleLoginItem()
         #expect(login.state == .disabled)
-        #expect(sut.loginMenuItem.state == .off)
-        #expect(sut.loginMenuItem.title == L10n.launchAtLoginFailed)
+        #expect(!sut.isLaunchAtLoginEnabled)
+        #expect(sut.launchAtLoginTitle == L10n.launchAtLoginFailed)
     }
 
     @Test func loginItemSuccessClearsFailure() {
@@ -173,23 +167,23 @@ struct StatusItemControllerTests {
         sut.toggleLoginItem()
         login.shouldFail = false
         sut.toggleLoginItem()
-        #expect(sut.loginMenuItem.title == L10n.launchAtLogin)
-        #expect(sut.loginMenuItem.state == .on)
+        #expect(sut.launchAtLoginTitle == L10n.launchAtLogin)
+        #expect(sut.isLaunchAtLoginEnabled)
     }
 
-    @Test func menuWillOpenResyncsExternalChanges() {
+    @Test func openingPopoverResyncsExternalChanges() {
         let (sut, _, _) = makeSUT()
         login.state = .enabled  // The user changed the login item in System Settings.
-        sut.menuWillOpen(sut.menu)
-        #expect(sut.loginMenuItem.state == .on)
+        sut.popoverWillShow(Notification(name: NSPopover.willShowNotification))
+        #expect(sut.isLaunchAtLoginEnabled)
     }
 
     @Test func loginItemPendingApprovalIsShown() {
         let (sut, _, _) = makeSUT()
         login.stateAfterEnable = .requiresApproval
         sut.toggleLoginItem()
-        #expect(sut.loginMenuItem.title == L10n.launchAtLoginNeedsApproval)
-        #expect(sut.loginMenuItem.state == .off)
+        #expect(sut.launchAtLoginTitle == L10n.launchAtLoginNeedsApproval)
+        #expect(!sut.isLaunchAtLoginEnabled)
     }
 
     @Test func clickingWhilePendingOpensSettings() {
@@ -200,10 +194,10 @@ struct StatusItemControllerTests {
         #expect(login.state == .requiresApproval)
     }
 
-    @Test func menuWillOpenShowsPendingApproval() {
+    @Test func openingPopoverShowsPendingApproval() {
         let (sut, _, _) = makeSUT()
         login.state = .requiresApproval
-        sut.menuWillOpen(sut.menu)
-        #expect(sut.loginMenuItem.title == L10n.launchAtLoginNeedsApproval)
+        sut.popoverWillShow(Notification(name: NSPopover.willShowNotification))
+        #expect(sut.launchAtLoginTitle == L10n.launchAtLoginNeedsApproval)
     }
 }

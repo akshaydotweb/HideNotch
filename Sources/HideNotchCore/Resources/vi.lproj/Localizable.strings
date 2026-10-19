@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "Mở khi đăng nhập";
 "menu.launchAtLogin.failed" = "Mở khi đăng nhập (thất bại)";
 "menu.launchAtLogin.needsApproval" = "Mở khi đăng nhập (cần cho phép trong Cài đặt hệ thống)";
+"panel.description" = "Tô đen thanh menu để phần tai thỏ hòa lẫn vào đó.";
 "menu.quit" = "Thoát";
 "menu.showMenuBarIcon" = "Hiện biểu tượng trên thanh menu";
 "menu.roundedScreenCorners" = "Bo tròn góc màn hình";

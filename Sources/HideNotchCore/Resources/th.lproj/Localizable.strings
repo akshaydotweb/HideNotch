@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "เปิดเมื่อเข้าสู่ระบบ";
 "menu.launchAtLogin.failed" = "เปิดเมื่อเข้าสู่ระบบ (ล้มเหลว)";
 "menu.launchAtLogin.needsApproval" = "เปิดเมื่อเข้าสู่ระบบ (ต้องอนุมัติในการตั้งค่าระบบ)";
+"panel.description" = "ทำให้แถบเมนูเป็นสีดำเพื่อให้รอยบากกลมกลืนไปกับแถบเมนู";
 "menu.quit" = "ออก";
 "menu.showMenuBarIcon" = "แสดงไอคอนในแถบเมนู";
 "menu.roundedScreenCorners" = "มุมหน้าจอโค้งมน";

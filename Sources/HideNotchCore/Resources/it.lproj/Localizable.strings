@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "Apri al login";
 "menu.launchAtLogin.failed" = "Apri al login (non riuscito)";
 "menu.launchAtLogin.needsApproval" = "Apri al login (approva in Impostazioni di Sistema)";
+"panel.description" = "Colora di nero la barra dei menu per mimetizzare il notch.";
 "menu.quit" = "Esci";
 "menu.showMenuBarIcon" = "Mostra icona nella barra dei menu";
 "menu.roundedScreenCorners" = "Angoli dello schermo arrotondati";

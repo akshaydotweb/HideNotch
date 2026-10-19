@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "Beim Anmelden öffnen";
 "menu.launchAtLogin.failed" = "Beim Anmelden öffnen (fehlgeschlagen)";
 "menu.launchAtLogin.needsApproval" = "Beim Anmelden öffnen (in den Systemeinstellungen erlauben)";
+"panel.description" = "Färbt die Menüleiste schwarz, damit die Notch darin verschwindet.";
 "menu.quit" = "Beenden";
 "menu.showMenuBarIcon" = "Symbol in der Menüleiste anzeigen";
 "menu.roundedScreenCorners" = "Abgerundete Bildschirmecken";

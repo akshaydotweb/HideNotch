@@ -2,10 +2,11 @@
 "menu.launchAtLogin" = "Buka saat login";
 "menu.launchAtLogin.failed" = "Buka saat login (gagal)";
 "menu.launchAtLogin.needsApproval" = "Buka saat login (setujui di Pengaturan Sistem)";
+"panel.description" = "Mewarnai bilah menu dengan hitam agar notch menyatu.";
 "menu.quit" = "Keluar";
 "menu.showMenuBarIcon" = "Tampilkan Ikon Bilah Menu";
-"menu.roundedScreenCorners" = "Sudut Layar Membulat";
-"menu.displaysWithoutNotch" = "Sertakan Layar Tanpa Notch";
+"menu.roundedScreenCorners" = "Sudut layar membulat";
+"menu.displaysWithoutNotch" = "Sertakan layar tanpa notch";
 "alert.hiddenIcon.title" = "Ikon HideNotch kini disembunyikan.";
 "alert.hiddenIcon.message" = "Buka kembali HideNotch dari Aplikasi untuk menampilkan ikon bilah menu lagi.";
 "alert.hiddenIcon.confirm" = "OK";

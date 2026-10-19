@@ -2,6 +2,7 @@
 "menu.launchAtLogin" = "ログイン時に起動";
 "menu.launchAtLogin.failed" = "ログイン時に起動（失敗）";
 "menu.launchAtLogin.needsApproval" = "ログイン時に起動（システム設定で許可が必要）";
+"panel.description" = "メニューバーを黒く塗りつぶして、ノッチを目立たなくします。";
 "menu.quit" = "終了";
 "menu.showMenuBarIcon" = "メニューバーアイコンを表示";
 "menu.roundedScreenCorners" = "画面の角を丸くする";

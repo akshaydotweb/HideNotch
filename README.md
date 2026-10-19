@@ -15,14 +15,14 @@ A macOS menu-bar utility that paints the menu bar area on notched screens pure b
 
 ## Usage
 
-Click the menu-bar icon to see the following menu items:
+Click the menu-bar icon to open a panel. The switch at the top turns HideNotch on and off. The checkboxes below hold the options, and the "…" menu has launch at login, the icon setting, and Quit.
 
-- **Hide Notch**: toggles the black bar overlay. The checkmark reflects whether it's currently active. Changes apply immediately without a confirmation prompt. Enabling it also turns off “Show menu bar background” in System Settings so the system background does not cover the overlay. If you turn the system background back on, HideNotch switches off automatically within a second, removes its overlay without animation, restores the menu-bar icon, and explains which setting is required. HideNotch leaves that setting unchanged when disabled or closed. This uses an undocumented macOS API.
-- **Rounded Screen Corners**: toggles the 16-point black corner masks below the menu bar and at the bottom of the screen, animating the radius over 0.6 seconds. Enabled by default; the setting persists across restarts. The corners appear when Hide Notch is active.
-- **Include Displays Without Notch**: also paints the menu bar and corners black on displays without a notch, such as external monitors. Off by default; the setting persists across restarts. Displays without a visible menu bar (auto-hidden, or secondary displays when “Displays have separate Spaces” is off) stay uncovered.
-- **Launch at Login**: when checked, the app starts automatically at login. If the system requires approval in System Settings, the menu shows "Launch at Login (Approve in System Settings)"; clicking it again opens the corresponding System Settings page.
-- **Show Menu Bar Icon**: uncheck to hide the icon while keeping the overlay active. A dialog explains how to restore it; Cancel brings it back immediately. Open HideNotch again from Applications, Spotlight, or `open ~/Applications/HideNotch.app` to restore the icon and access the menu. The setting persists across restarts and launch at login.
-- **Quit**: plays the reverse reveal animation, then quits the app.
+- **Hide Notch** (the switch): toggles the black bar overlay. Changes apply immediately without a confirmation prompt. Enabling it also turns off “Show menu bar background” in System Settings so the system background does not cover the overlay. If you turn the system background back on, HideNotch switches off automatically within a second, removes its overlay without animation, restores the menu-bar icon, and explains which setting is required. HideNotch leaves that setting unchanged when disabled or closed. This uses an undocumented macOS API.
+- **Rounded screen corners**: toggles the 16-point black corner masks below the menu bar and at the bottom of the screen, animating the radius over 0.6 seconds. Enabled by default; the setting persists across restarts. The corners appear when Hide Notch is active.
+- **Include displays without notch**: also paints the menu bar and corners black on displays without a notch, such as external monitors. Off by default; the setting persists across restarts. Displays without a visible menu bar (auto-hidden, or secondary displays when “Displays have separate Spaces” is off) stay uncovered.
+- **Launch at Login** ("…" menu): when checked, the app starts automatically at login. If the system requires approval in System Settings, the item reads "Launch at Login (Approve in System Settings)"; clicking it again opens the corresponding System Settings page.
+- **Show Menu Bar Icon** ("…" menu): uncheck to hide the icon while keeping the overlay active. A dialog explains how to restore it; Cancel brings it back immediately. Open HideNotch again from Applications, Spotlight, or `open ~/Applications/HideNotch.app` to restore the icon and access the panel. The setting persists across restarts and launch at login. If macOS doesn’t show the icon, for example because HideNotch is turned off under “Allow in the Menu Bar”, launching or reopening HideNotch shows a dialog with a button to open Menu Bar settings.
+- **Quit** ("…" menu): plays the reverse reveal animation, then quits the app.
 
 ## Languages
 
