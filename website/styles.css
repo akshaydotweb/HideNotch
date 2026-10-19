@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+}
+
+/*
+ * macOS 26 style switch. While pressed, the knob grows into a glass lens: a hole is cut into the track below it, and
+ * inside the lens a copy of the track and a tinted rim are merged by an SVG goo filter
+ * (#glass-switch-goo in index.html), which reads as the track refracting through the glass.
+ * switch.ts drives pressing, clicking and dragging.
+ */
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --sx {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --sy {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@layer components {
+  .glass-switch {
+    --on: rgb(0 115 246);
+    --off: rgb(210 209 214);
+    --track: color-mix(in srgb, var(--on) calc(clamp(0, var(--p), 1) * 100%), var(--off));
+    /* Measured from macOS 26 light mode screenshots: track 2.28:1, knob 1.6:1, equal gap all around */
+    --w: 68.5px;
+    --h: 30px;
+    --gap: 2.3px;
+    --kh: calc(var(--h) - 2 * var(--gap));
+    --kw: calc(var(--kh) * 1.6);
+    --travel: calc(var(--w) - var(--kw) - 2 * var(--gap));
+    --t: 200ms;
+    --ease: ease-out;
+    position: relative;
+    display: inline-block;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 999px;
+    touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      --p 150ms ease-out,
+      --sx var(--t) var(--ease),
+      --sy var(--t) var(--ease);
+
+    &:has(:checked) {
+      --p: 1;
+    }
+
+    &[data-pressed] {
+      --sx: calc(1.65 + var(--stretch, 0));
+      --sy: calc(1.65 - var(--stretch, 0));
+      --t: 600ms;
+      --ease: linear(
+        0, 0.6091 3.69%, 1.0259 7.24%, 1.1733 9.05%, 1.283 10.92%, 1.3562 12.87%, 1.3948 14.95%,
+        1.4014 16.03%, 1.3999 17.16%, 1.3731 19.64%, 1.3202 22.27%, 1.1394 29.39%, 1.0582 33.17%,
+        0.9943 37.45%, 0.9734 39.64%, 0.9593 41.92%, 0.9505 45.08%, 0.9517 48.7%, 0.9924 63.02%,
+        1.0046 71.2%, 1.0061 78.24%, 1
+      );
+    }
+
+    &[data-dragging] {
+      transition:
+        --sx var(--t) var(--ease),
+        --sy var(--t) var(--ease);
+    }
+
+    &:has(:focus-visible) {
+      outline: 3px solid rgb(0 115 246 / 0.4);
+      outline-offset: 2px;
+    }
+
+    & input {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      opacity: 0;
+      cursor: default;
+    }
+  }
+
+  .glass-switch-track {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--track);
+    pointer-events: none;
+
+    /* The hole under the lens, centered on the knob */
+    [data-pressed] > & {
+      mask:
+        linear-gradient(#000 0 0),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 25' preserveAspectRatio='none'%3E%3Crect width='40' height='25' rx='12.5'/%3E%3C/svg%3E")
+          calc(var(--gap) + var(--kw) / 2 + var(--p) * var(--travel) - var(--sx) * var(--kw) / 2)
+          calc(var(--h) / 2 - var(--sy) * var(--kh) / 2) /
+          calc(var(--sx) * var(--kw)) calc(var(--sy) * var(--kh)) no-repeat;
+      mask-composite: exclude;
+    }
+  }
+
+  .glass-switch-knob {
+    position: absolute;
+    top: var(--gap);
+    left: var(--gap);
+    width: var(--kw);
+    height: var(--kh);
+    border-radius: 999px;
+    translate: calc(var(--p) * var(--travel)) 0;
+    scale: var(--sx) var(--sy);
+    pointer-events: none;
+
+    & > * {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
+  }
+
+  /* Glass rim highlights and shadow, on top of everything */
+  .glass-switch-rim {
+    z-index: 1;
+    opacity: 0;
+    transition: opacity var(--t) var(--ease);
+    box-shadow:
+      0.5px -0.5px 1px rgb(255 255 255 / 0.5) inset,
+      0 -0.5px 1px rgb(255 255 255 / 0.5) inset,
+      -0.5px -0.5px 1px rgb(255 255 255 / 0.5) inset,
+      0.5px 0.5px 1px rgb(77 77 77 / 0.5) inset,
+      -4px 2px 5px -3px rgb(77 77 77 / 0.25) inset,
+      -0.5px 0.5px 3px rgb(77 77 77 / 0.25) inset,
+      -0.5px -0.5px 4px rgb(153 153 153 / 0.15),
+      0.5px 0.5px 1px rgb(77 77 77 / 0.15),
+      1px 1px 3px rgb(77 77 77 / 0.15),
+      -1px -0.5px 1px rgb(255 255 255 / 0.25) inset,
+      1.5px 3px 8px -3px rgb(77 77 77 / 0.5);
+
+    [data-pressed] & {
+      opacity: 1;
+    }
+  }
+
+  /* Blurred at rest so the liquid doesn't peek out, sharp once the lens opens */
+  .glass-switch-wrapper {
+    clip-path: inset(0 round 999px);
+    filter: blur(3px);
+    transition: filter var(--t) var(--ease);
+
+    [data-pressed] & {
+      filter: blur(0);
+    }
+  }
+
+  .glass-switch-liquids {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    filter: url(#glass-switch-goo);
+  }
+
+  .glass-switch-liquid-rim {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0 1.5px 2px var(--track),
+      inset calc(var(--p) * 4px - 2px) 0 1.5px 2px var(--track);
+  }
+
+  /* A copy of the whole track, slid so it stays aligned with the knob's travel */
+  .glass-switch-liquid-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: var(--w);
+    height: var(--h);
+    border-radius: 999px;
+    background: var(--track);
+    translate: calc(var(--p) * (var(--kw) - var(--w) - 12px)) -50%;
+    transition-property: height, left;
+    transition-duration: var(--t);
+    transition-timing-function: var(--ease);
+
+    [data-pressed] & {
+      left: 6px;
+      height: calc(var(--h) - 12px);
+    }
+  }
+
+  /* The white knob at rest */
+  .glass-switch-cover {
+    background: white;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 2px 6px rgb(0 0 0 / 0.08);
+    transition: opacity var(--t) var(--ease);
+
+    [data-pressed] & {
+      opacity: 0;
+    }
+  }
+}

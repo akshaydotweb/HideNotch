@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HideNotch · Hide your MacBook notch</title>
+    <meta
+      name="description"
+      content="HideNotch paints the menu bar black on notched MacBooks so the notch blends in. Free and open source for macOS 26."
+    />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./switch.ts"></script>
+  </head>
+  <body class="overflow-x-clip bg-neutral-50 font-sans text-neutral-900 antialiased">
+    <header class="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
+      <a href="/" class="flex items-center gap-2.5 font-semibold tracking-tight">
+        <img src="./icon.svg" alt="" class="h-4" />
+        HideNotch
+      </a>
+      <a
+        href="https://github.com/niklasravnsborg/HideNotch"
+        class="text-sm text-neutral-500 transition hover:text-neutral-900"
+      >
+        GitHub
+      </a>
+    </header>
+
+    <main>
+      <!-- Hero with interactive demo: the checkbox drives every transition through group-has-checked. -->
+      <section class="group mx-auto max-w-5xl px-6 pt-16 pb-20 text-center sm:pt-24">
+        <h1 class="text-5xl font-semibold tracking-tight text-balance sm:text-6xl">
+          Make the notch disappear.
+        </h1>
+        <label class="glass-switch mt-10 mb-8">
+          <input type="checkbox" checked aria-label="Hide Notch" />
+          <span class="glass-switch-track"></span>
+          <span class="glass-switch-knob">
+            <span class="glass-switch-rim"></span>
+            <span class="glass-switch-wrapper">
+              <span class="glass-switch-liquids">
+                <span class="glass-switch-liquid-rim"></span>
+                <span class="glass-switch-liquid-track"></span>
+              </span>
+            </span>
+            <span class="glass-switch-cover"></span>
+          </span>
+          <svg class="absolute size-0" aria-hidden="true">
+            <filter id="glass-switch-goo">
+              <feGaussianBlur stdDeviation="1" />
+              <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -10" />
+            </filter>
+          </svg>
+        </label>
+        <!-- Only the top of the laptop is shown, fading out toward the bottom. The lid is a thin
+             aluminum edge around a black glass bezel, which the notch blends into like on a MacBook. -->
+        <div class="@container mx-auto aspect-[1512/560] max-w-4xl overflow-hidden mask-b-from-65%">
+          <div class="rounded-t-[2.6cqw] bg-linear-to-b from-neutral-300 to-neutral-400 p-[0.3cqw] pb-0 shadow-[inset_0_0.5px_0_rgb(255_255_255/0.8)]">
+            <div class="rounded-t-[2.3cqw] bg-black px-[1.25cqw] pt-[1.25cqw]">
+              <div
+                class="@container relative aspect-[1512/982] overflow-hidden rounded-t-[0.9cqw]"
+              >
+              <!-- Fit the photo to the visible top of the screen rather than the whole screen. -->
+              <img src="./wallpaper.jpg" alt="" class="absolute inset-x-0 top-0 h-[57%] w-full object-cover object-[50%_32%]" />
+
+              <!-- Rounded corners, as in the app: the upper pair slides down together with the
+                   black strip, the lower pair grows into place. -->
+              <div
+                class="pointer-events-none absolute inset-x-0 top-[2.45cqw] h-[1.1cqw] -translate-y-[3.55cqw] transition-transform duration-600 ease-in-out group-has-checked:translate-y-0"
+              >
+                <div class="absolute left-0 size-[1.1cqw] bg-[radial-gradient(circle_farthest-side_at_100%_100%,transparent_96%,black)]"></div>
+                <div class="absolute right-0 size-[1.1cqw] bg-[radial-gradient(circle_farthest-side_at_0_100%,transparent_96%,black)]"></div>
+              </div>
+              <div
+                class="pointer-events-none absolute bottom-0 left-0 size-0 bg-[radial-gradient(circle_farthest-side_at_100%_0,transparent_96%,black)] transition-[width,height] duration-600 ease-in-out group-has-checked:size-[1.1cqw]"
+              ></div>
+              <div
+                class="pointer-events-none absolute right-0 bottom-0 size-0 bg-[radial-gradient(circle_farthest-side_at_0_0,transparent_96%,black)] transition-[width,height] duration-600 ease-in-out group-has-checked:size-[1.1cqw]"
+              ></div>
+
+              <!-- Menu bar. HideNotch slides a black strip in behind its contents. -->
+              <div
+                class="absolute inset-x-0 top-0 flex h-[2.45cqw] items-center justify-between overflow-hidden px-[1.4cqw] text-[0.9cqw] text-white text-shadow-[0_0_0.3cqw_rgb(0_0_0/0.35)]"
+              >
+                <div
+                  class="absolute inset-0 -translate-y-[3.55cqw] bg-black transition-transform duration-600 ease-in-out group-has-checked:translate-y-0"
+                ></div>
+                <div class="relative flex items-center gap-[1.4cqw]">
+                  <span class="font-semibold">Finder</span>
+                  <span>File</span>
+                  <span>Edit</span>
+                  <span>View</span>
+                  <span>Go</span>
+                  <span>Window</span>
+                  <span>Help</span>
+                </div>
+                <div class="relative flex items-center gap-[1.4cqw]">
+                  <svg viewBox="0 0 18 14" fill="none" class="h-[0.85cqw] overflow-visible">
+                    <rect x="0.7" y="0.7" width="16.6" height="12.6" rx="2.5" stroke="currentColor" stroke-width="1.4" />
+                    <rect x="5.5" y="0" width="7" height="4" rx="1" fill="currentColor" />
+                  </svg>
+                  <svg viewBox="0 0 26 12" fill="none" class="h-[0.85cqw] overflow-visible">
+                    <rect x="0.5" y="0.5" width="22" height="11" rx="3" stroke="currentColor" opacity=".5" />
+                    <rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor" />
+                    <path d="M24 4v4a2 2 0 0 0 0-4Z" fill="currentColor" opacity=".5" />
+                  </svg>
+                  <span>Mon 19 Oct 9:41</span>
+                </div>
+              </div>
+
+              <!-- The notch, with the camera in it -->
+              <div
+                class="absolute top-0 left-1/2 flex h-[2.45cqw] w-[12.2cqw] -translate-x-1/2 items-center justify-center rounded-b-[0.7cqw] bg-black"
+              >
+                <div class="size-[0.55cqw] rounded-full bg-[radial-gradient(circle_at_35%_35%,#3b4a6b,#0b0f1a_70%)]"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-16 flex flex-col items-center gap-3">
+          <a
+            href="https://github.com/niklasravnsborg/HideNotch/releases/latest"
+            class="rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-700"
+          >
+            Download for Mac
+          </a>
+          <p class="text-sm text-neutral-500">Free and open source. Requires macOS 26 or later. Available in 11 languages.</p>
+        </div>
+      </section>
+
+      <section class="border-y border-neutral-200 bg-white">
+        <div class="mx-auto grid max-w-5xl gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2">
+          <div>
+            <h2 class="font-semibold">Black menu bar</h2>
+            <p class="mt-2 text-neutral-600">
+              The menu bar turns black, so the notch blends in. Turn it on and off from the menu
+              bar.
+            </p>
+          </div>
+          <div>
+            <h2 class="font-semibold">Rounded screen corners</h2>
+            <p class="mt-2 text-neutral-600">
+              Rounded corners make the screen look like one clean shape. Turn them off if you only
+              want the black bar.
+            </p>
+          </div>
+          <div>
+            <h2 class="font-semibold">External displays too</h2>
+            <p class="mt-2 text-neutral-600">
+              Use the same look on displays without a notch, so all your screens match.
+            </p>
+          </div>
+          <div>
+            <h2 class="font-semibold">Stays out of the way</h2>
+            <p class="mt-2 text-neutral-600">
+              No Dock icon. Start it at login, or hide the menu bar icon completely.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-5xl px-6 py-20">
+        <h2 class="text-2xl font-semibold tracking-tight">Install</h2>
+        <ol class="mt-6 grid gap-6 sm:grid-cols-3">
+          <li>
+            <span class="text-sm text-neutral-400">1</span>
+            <p class="mt-1 text-neutral-700">
+              Download the latest <code class="text-sm">HideNotch.dmg</code> from
+              <a href="https://github.com/niklasravnsborg/HideNotch/releases/latest" class="underline underline-offset-2 hover:text-neutral-900">GitHub</a>.
+            </p>
+          </li>
+          <li>
+            <span class="text-sm text-neutral-400">2</span>
+            <p class="mt-1 text-neutral-700">Open it and drag HideNotch into Applications.</p>
+          </li>
+          <li>
+            <span class="text-sm text-neutral-400">3</span>
+            <p class="mt-1 text-neutral-700">
+              Launch it. HideNotch lives in the menu bar, click the icon to open its settings.
+            </p>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="border-t border-neutral-200">
+      <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-8 text-sm text-neutral-500">
+        <span>MIT licensed</span>
+        <a href="https://github.com/niklasravnsborg/HideNotch" class="hover:text-neutral-900">Source on GitHub</a>
+      </div>
+      <p class="mx-auto max-w-5xl px-6 pb-8 text-xs text-neutral-400">
+        Wallpaper photo by
+        <a href="https://unsplash.com/@vay2250?utm_source=hidenotch&utm_medium=referral" class="underline underline-offset-2 hover:text-neutral-700">Varun Yadav</a>
+        on
+        <a href="https://unsplash.com/photos/golden-gate-bridge-san-francisco-california-QhYTCG3CTeI?utm_source=hidenotch&utm_medium=referral" class="underline underline-offset-2 hover:text-neutral-700">Unsplash</a>.
+      </p>
+    </footer>
+  </body>
+</html>
