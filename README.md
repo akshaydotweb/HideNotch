@@ -58,3 +58,13 @@ xcrun notarytool store-credentials HideNotch \
 ```
 
 After that, `app/scripts/build-dmg.sh` will silently sign and notarize using that keychain profile, without needing credentials again.
+
+## Contributing
+
+The repo has two parts: the macOS app in `app/` and the website in `website/`.
+
+Start each commit message with the scope it touches: `app:`, `website:`, or `root:` for repo-level files like this README. Keep a commit within one scope where possible.
+
+```
+app: replace status item menu with a settings popover
+```
