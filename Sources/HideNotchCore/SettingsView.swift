@@ -21,7 +21,8 @@ struct SettingsView: View {
                 .font(.title2.weight(.semibold))
             if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                 Text(verbatim: "v\(version)")
-                    .foregroundStyle(.secondary)
+                    .font(.callout)
+                    .foregroundStyle(.tertiary)
             }
             Spacer()
             Menu {
@@ -49,7 +50,6 @@ struct SettingsView: View {
         VStack(spacing: 12) {
             Toggle(L10n.hideNotch, isOn: binding(controller.isOverlayEnabled, controller.toggleOverlay))
                 .toggleStyle(.switch)
-                .controlSize(.large)
                 .labelsHidden()
             Text(L10n.description)
                 .multilineTextAlignment(.center)

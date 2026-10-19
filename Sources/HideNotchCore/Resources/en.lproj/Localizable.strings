@@ -2,7 +2,7 @@
 "menu.launchAtLogin" = "Launch at Login";
 "menu.launchAtLogin.failed" = "Launch at Login (Failed)";
 "menu.launchAtLogin.needsApproval" = "Launch at Login (Approve in System Settings)";
-"panel.description" = "Paints the menu bar black so the notch blends in.";
+"panel.description" = "Paint the menu bar black\nso the notch blends in.";
 "menu.quit" = "Quit";
 "menu.showMenuBarIcon" = "Show Menu Bar Icon";
 "menu.roundedScreenCorners" = "Rounded screen corners";
