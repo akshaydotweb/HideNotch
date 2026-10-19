@@ -37,12 +37,13 @@ The interface is localized into 11 languages: English (default/fallback), Japane
 ## Building from Source
 
 ```bash
+cd app
 swift test              # run the unit tests
 scripts/build-app.sh    # ad-hoc signed build, installed to ~/Applications for local debugging
 scripts/build-dmg.sh    # produce a signed + notarized distributable DMG (dist/HideNotch-<version>.dmg)
 ```
 
-`scripts/build-dmg.sh` requires the following environment variables (both have defaults, so you usually don't need to set them):
+`app/scripts/build-dmg.sh` requires the following environment variables (both have defaults, so you usually don't need to set them):
 
 - `HIDENOTCH_SIGN_IDENTITY`: Developer ID Application signing identity, defaults to `Developer ID Application: XIONGGAO LI (Z8NL57N2AP)`.
 - `HIDENOTCH_NOTARY_PROFILE`: the keychain profile name used by `xcrun notarytool`, defaults to `HideNotch`.
@@ -56,4 +57,4 @@ xcrun notarytool store-credentials HideNotch \
   --password <app-specific-password>
 ```
 
-After that, `scripts/build-dmg.sh` will silently sign and notarize using that keychain profile, without needing credentials again.
+After that, `app/scripts/build-dmg.sh` will silently sign and notarize using that keychain profile, without needing credentials again.
