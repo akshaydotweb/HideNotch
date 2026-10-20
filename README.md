@@ -9,7 +9,7 @@ A macOS menu-bar utility that paints the menu bar area on notched screens pure b
 
 ## Installation
 
-1. Open the downloaded `HideNotch-<version>.dmg`.
+1. Download `HideNotch.dmg` from the [latest release](https://github.com/niklasravnsborg/HideNotch/releases/latest) and open it.
 2. Drag `HideNotch.app` onto the `Applications` icon in the window to install it.
 3. First launch: double-click `HideNotch.app` from `~/Applications` or the Applications folder. The app has no Dock icon; once running it only shows an icon in the menu bar.
 
@@ -40,15 +40,16 @@ The interface is localized into 11 languages: English (default/fallback), Japane
 cd app
 swift test              # run the unit tests
 scripts/build-app.sh    # ad-hoc signed build, installed to ~/Applications for local debugging
-scripts/build-dmg.sh    # produce a signed + notarized distributable DMG (dist/HideNotch-<version>.dmg)
+scripts/build-dmg.sh    # produce a signed + notarized distributable DMG (dist/HideNotch.dmg)
 ```
 
-`app/scripts/build-dmg.sh` requires the following environment variables (both have defaults, so you usually don't need to set them):
+`app/scripts/build-dmg.sh` reads these optional environment variables:
 
-- `HIDENOTCH_SIGN_IDENTITY`: Developer ID Application signing identity, defaults to `Developer ID Application: XIONGGAO LI (Z8NL57N2AP)`.
-- `HIDENOTCH_NOTARY_PROFILE`: the keychain profile name used by `xcrun notarytool`, defaults to `HideNotch`.
+- `HIDENOTCH_SIGN_IDENTITY`: the signing identity, defaults to `Developer ID Application`, which matches the Developer ID certificate in your keychain.
+- `HIDENOTCH_NOTARY_PROFILE`: the keychain profile used by `xcrun notarytool`, defaults to `HideNotch`.
+- `HIDENOTCH_NOTARY_KEY`, `HIDENOTCH_NOTARY_KEY_ID`, `HIDENOTCH_NOTARY_ISSUER`: an App Store Connect API key (`.p8` path, key ID, issuer ID). When set, they replace the keychain profile. CI uses these.
 
-Before first use on a machine, store your own Apple ID and app-specific password in the keychain profile once (**never** put your Apple ID / password into scripts or the repository):
+To notarize locally, store your credentials in a keychain profile once:
 
 ```bash
 xcrun notarytool store-credentials HideNotch \
@@ -57,7 +58,17 @@ xcrun notarytool store-credentials HideNotch \
   --password <app-specific-password>
 ```
 
-After that, `app/scripts/build-dmg.sh` will silently sign and notarize using that keychain profile, without needing credentials again.
+## Releasing
+
+1. Bump `CFBundleShortVersionString` and `CFBundleVersion` in `app/Resources/Info.plist` and commit.
+2. Tag and push: `git tag v0.1.0 && git push origin v0.1.0`.
+
+`.github/workflows/release.yml` checks that the tag matches the app version, runs the tests, builds, signs, and notarizes `HideNotch.dmg`, and publishes it as a GitHub release. It needs these repository secrets:
+
+- `DEVELOPER_ID_CERTIFICATE_P12`: the Developer ID Application certificate with its private key, exported as `.p12` and base64 encoded.
+- `DEVELOPER_ID_CERTIFICATE_PASSWORD`: the password of that `.p12`.
+- `NOTARY_KEY_P8`: the contents of the App Store Connect API key file.
+- `NOTARY_KEY_ID`, `NOTARY_ISSUER_ID`: the key ID and issuer ID shown next to that key in App Store Connect.
 
 ## Contributing
 
