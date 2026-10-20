@@ -6,7 +6,7 @@ import SwiftUI
 @MainActor
 @Observable
 public final class StatusItemController: NSObject, NSPopoverDelegate {
-    @ObservationIgnored private static let log = Logger(subsystem: "com.leether.HideNotch", category: "StatusItem")
+    @ObservationIgnored private static let log = Logger(subsystem: "com.niklasravnsborg.hidenotch", category: "StatusItem")
 
     @ObservationIgnored private let preferences: Preferences
     @ObservationIgnored private let overlay: OverlayController

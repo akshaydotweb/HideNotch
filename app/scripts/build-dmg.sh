@@ -3,13 +3,18 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-IDENTITY="${HIDENOTCH_SIGN_IDENTITY:-Developer ID Application: XIONGGAO LI (Z8NL57N2AP)}"
-PROFILE="${HIDENOTCH_NOTARY_PROFILE:-HideNotch}"
+IDENTITY="${HIDENOTCH_SIGN_IDENTITY:-Developer ID Application}"
+
+# CI authenticates with an App Store Connect API key, local builds with a keychain profile.
+if [ -n "${HIDENOTCH_NOTARY_KEY:-}" ]; then
+    NOTARY_AUTH=(--key "$HIDENOTCH_NOTARY_KEY" --key-id "$HIDENOTCH_NOTARY_KEY_ID" --issuer "$HIDENOTCH_NOTARY_ISSUER")
+else
+    NOTARY_AUTH=(--keychain-profile "${HIDENOTCH_NOTARY_PROFILE:-HideNotch}")
+fi
 
 scripts/assemble-app.sh "$IDENTITY"
 
 APP=".build/HideNotch.app"
-VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Resources/Info.plist)
 
 STAGING=".build/dmg-staging"
 rm -rf "$STAGING"
@@ -18,13 +23,13 @@ cp -R "$APP" "$STAGING/"
 ln -s /Applications "$STAGING/Applications"
 
 mkdir -p dist
-DMG="dist/HideNotch-$VERSION.dmg"
+DMG="dist/HideNotch.dmg"
 rm -f "$DMG"
 hdiutil create -volname "HideNotch" -srcfolder "$STAGING" -ov -format UDZO "$DMG"
 
 codesign --force --timestamp --sign "$IDENTITY" "$DMG"
 
-SUBMIT_JSON=$(xcrun notarytool submit "$DMG" --keychain-profile "$PROFILE" --wait --output-format json)
+SUBMIT_JSON=$(xcrun notarytool submit "$DMG" "${NOTARY_AUTH[@]}" --wait --output-format json)
 echo "$SUBMIT_JSON"
 
 if command -v /usr/bin/python3 >/dev/null 2>&1; then
@@ -40,7 +45,7 @@ echo "Notarization status: $NOTARY_STATUS"
 
 if [ "$NOTARY_STATUS" != "Accepted" ]; then
     echo "Notarization failed; fetching log:" >&2
-    xcrun notarytool log "$NOTARY_ID" --keychain-profile "$PROFILE"
+    xcrun notarytool log "$NOTARY_ID" "${NOTARY_AUTH[@]}"
     exit 1
 fi
 
