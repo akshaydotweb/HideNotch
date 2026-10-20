@@ -16,3 +16,12 @@
 "alert.disallowedIcon.title" = "HideNotch’s menu bar icon isn’t visible.";
 "alert.disallowedIcon.message" = "Turn on HideNotch under “Allow in the Menu Bar” in Menu Bar settings. If it’s already on, the menu bar may be too full to show it.";
 "alert.disallowedIcon.openSettings" = "Open Menu Bar Settings";
+"panel.update" = "Update";
+"menu.checkForUpdates" = "Check for Updates…";
+"alert.update.title" = "HideNotch %@ is available.";
+"alert.update.message" = "You have version %@.";
+"alert.update.download" = "Download";
+"alert.update.later" = "Later";
+"alert.upToDate.title" = "HideNotch is up to date.";
+"alert.upToDate.message" = "Version %@ is the latest version.";
+"alert.updateFailed.title" = "Couldn’t check for updates.";

@@ -24,11 +24,17 @@ struct SettingsView: View {
                     .font(.callout)
                     .foregroundStyle(.tertiary)
             }
+            if controller.updates.availableVersion != nil {
+                Button(L10n.update) { NSWorkspace.shared.open(UpdateChecker.download) }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+            }
             Spacer()
             Menu {
                 Toggle(controller.launchAtLoginTitle,
                        isOn: binding(controller.isLaunchAtLoginEnabled, controller.toggleLoginItem))
                 Toggle(L10n.showMenuBarIcon, isOn: binding(controller.isMenuBarIconShown, controller.toggleMenuBarIcon))
+                Button(L10n.checkForUpdates, action: controller.checkForUpdates)
                 Divider()
                 Button(L10n.quit, action: controller.quit)
                     .keyboardShortcut("q")

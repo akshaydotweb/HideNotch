@@ -16,3 +16,12 @@
 "alert.disallowedIcon.title" = "Ikon bar menu HideNotch tidak terlihat.";
 "alert.disallowedIcon.message" = "Nyalakan HideNotch di “Izinkan di Bar Menu” pada pengaturan Bar Menu. Jika sudah menyala, bar menu mungkin terlalu penuh untuk menampilkannya.";
 "alert.disallowedIcon.openSettings" = "Buka Pengaturan Bar Menu";
+"panel.update" = "Perbarui";
+"menu.checkForUpdates" = "Periksa Pembaruan…";
+"alert.update.title" = "HideNotch %@ telah tersedia.";
+"alert.update.message" = "Versi Anda %@.";
+"alert.update.download" = "Unduh";
+"alert.update.later" = "Nanti";
+"alert.upToDate.title" = "HideNotch sudah versi terbaru.";
+"alert.upToDate.message" = "Versi %@ adalah versi terbaru.";
+"alert.updateFailed.title" = "Tidak dapat memeriksa pembaruan.";

@@ -5,6 +5,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     private let preferences = Preferences()
     private let overlay = OverlayController(screens: SystemScreens(), makeWindow: { BarWindow() },
                                             onEnable: { MenuBarBackground.disable() })
+    private let updates = UpdateChecker()
     private var statusController: StatusItemController?
     private var menuBarBackgroundMonitor: Timer?
 
@@ -25,10 +26,12 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApplication.shared.mainMenu = NSMenu()
         NSApplication.shared.mainMenu?.addItem(appMenuItem)
 
-        let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem())
+        let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem(),
+                                          updates: updates)
         status.install()
         status.checkIconVisibility()
         statusController = status
+        updates.start()
 
         // SkyLight's private notification does not reliably arrive across processes.
         // Read the setting while enabled rather than overriding a user's later change.

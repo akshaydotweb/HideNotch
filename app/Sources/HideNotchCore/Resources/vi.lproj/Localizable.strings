@@ -16,3 +16,12 @@
 "alert.disallowedIcon.title" = "Biểu tượng HideNotch trên thanh menu không hiển thị.";
 "alert.disallowedIcon.message" = "Bật HideNotch trong “Cho phép trên thanh menu” ở cài đặt Thanh menu. Nếu đã bật, thanh menu có thể quá đầy để hiển thị biểu tượng.";
 "alert.disallowedIcon.openSettings" = "Mở cài đặt Thanh menu";
+"panel.update" = "Cập nhật";
+"menu.checkForUpdates" = "Kiểm tra cập nhật…";
+"alert.update.title" = "Đã có HideNotch %@.";
+"alert.update.message" = "Bạn đang dùng phiên bản %@.";
+"alert.update.download" = "Tải về";
+"alert.update.later" = "Để sau";
+"alert.upToDate.title" = "HideNotch đã là phiên bản mới nhất.";
+"alert.upToDate.message" = "Phiên bản %@ là phiên bản mới nhất.";
+"alert.updateFailed.title" = "Không thể kiểm tra cập nhật.";

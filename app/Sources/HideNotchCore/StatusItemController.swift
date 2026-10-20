@@ -17,6 +17,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     @ObservationIgnored private(set) var statusItem: NSStatusItem?
     @ObservationIgnored let popover = NSPopover()
     @ObservationIgnored private var outsideClickMonitor: Any?
+    @ObservationIgnored let updates: UpdateChecker
     private var loginItemFailed = false
 
     private(set) var isOverlayEnabled = false
@@ -28,6 +29,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
 
     public init(
         preferences: Preferences, overlay: OverlayController, loginItem: LoginItemControlling,
+        updates: UpdateChecker = UpdateChecker(),
         confirmHidingIcon: @escaping @MainActor () -> Bool = StatusItemController.explainHiddenIcon,
         informSystemBackground: @escaping @MainActor () -> Void = StatusItemController.explainSystemBackground,
         informDisallowedIcon: @escaping @MainActor () -> Void = StatusItemController.explainDisallowedIcon
@@ -35,6 +37,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         self.preferences = preferences
         self.overlay = overlay
         self.loginItem = loginItem
+        self.updates = updates
         self.confirmHidingIcon = confirmHidingIcon
         self.informSystemBackground = informSystemBackground
         self.informDisallowedIcon = informDisallowedIcon
@@ -183,6 +186,35 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
             Self.log.error("Login item update failed: \(error.localizedDescription, privacy: .public)")
         }
         syncState()
+    }
+
+    func checkForUpdates() {
+        popover.close()
+        Task { @MainActor in
+            let alert = NSAlert()
+            var offersDownload = false
+            do {
+                if let version = try await updates.check() {
+                    offersDownload = true
+                    alert.messageText = L10n.updateAlertTitle(version)
+                    alert.informativeText = L10n.updateAlertMessage(updates.currentVersion)
+                    alert.addButton(withTitle: L10n.updateAlertDownload)
+                    alert.addButton(withTitle: L10n.updateAlertLater)
+                } else {
+                    alert.messageText = L10n.upToDateAlertTitle
+                    alert.informativeText = L10n.upToDateAlertMessage(updates.currentVersion)
+                    alert.addButton(withTitle: L10n.hiddenIconAlertConfirm)
+                }
+            } catch {
+                alert.messageText = L10n.updateFailedAlertTitle
+                alert.informativeText = error.localizedDescription
+                alert.addButton(withTitle: L10n.hiddenIconAlertConfirm)
+            }
+            NSApplication.shared.activate()
+            if alert.runModal() == .alertFirstButtonReturn, offersDownload {
+                NSWorkspace.shared.open(UpdateChecker.download)
+            }
+        }
     }
 
     func quit() {

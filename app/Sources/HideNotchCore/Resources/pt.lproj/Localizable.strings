@@ -16,3 +16,12 @@
 "alert.disallowedIcon.title" = "O ícone do HideNotch não está visível na barra de menus.";
 "alert.disallowedIcon.message" = "Ative o HideNotch em “Permitir na barra de menus” nos ajustes da Barra de Menus. Se já estiver ativado, a barra de menus pode estar cheia demais para exibi-lo.";
 "alert.disallowedIcon.openSettings" = "Abrir ajustes da Barra de Menus";
+"panel.update" = "Atualizar";
+"menu.checkForUpdates" = "Buscar Atualizações…";
+"alert.update.title" = "HideNotch %@ está disponível.";
+"alert.update.message" = "Você tem a versão %@.";
+"alert.update.download" = "Baixar";
+"alert.update.later" = "Mais tarde";
+"alert.upToDate.title" = "O HideNotch está atualizado.";
+"alert.upToDate.message" = "A versão %@ é a mais recente.";
+"alert.updateFailed.title" = "Não foi possível buscar atualizações.";
