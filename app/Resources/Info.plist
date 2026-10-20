@@ -38,5 +38,15 @@
 	<string>26.0</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>SUAutomaticallyUpdate</key>
+	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/niklasravnsborg/HideNotch/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>VfLNpvgq4ds8pR+99jZQSeYpP3clguKKNjBsLes4UWM=</string>
+	<key>SUShowReleaseNotes</key>
+	<false/>
 </dict>
 </plist>

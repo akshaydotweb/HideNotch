@@ -19,10 +19,3 @@
 "panel.update" = "Update";
 "hint.hideNotch" = "Hej! Click here to hide your notch.";
 "menu.checkForUpdates" = "Check for Updates…";
-"alert.update.title" = "HideNotch %@ is available.";
-"alert.update.message" = "You have version %@.";
-"alert.update.download" = "Download";
-"alert.update.later" = "Later";
-"alert.upToDate.title" = "HideNotch is up to date.";
-"alert.upToDate.message" = "Version %@ is the latest version.";
-"alert.updateFailed.title" = "Couldn’t check for updates.";

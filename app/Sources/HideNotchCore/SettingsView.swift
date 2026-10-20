@@ -24,8 +24,8 @@ struct SettingsView: View {
                     .font(.callout)
                     .foregroundStyle(.tertiary)
             }
-            if controller.updates.availableVersion != nil {
-                Button(L10n.update) { NSWorkspace.shared.open(UpdateChecker.download) }
+            if controller.updates.isUpdateReady {
+                Button(L10n.update, action: controller.updates.installUpdate)
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
             }

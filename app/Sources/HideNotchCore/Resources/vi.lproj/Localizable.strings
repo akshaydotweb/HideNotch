@@ -19,10 +19,3 @@
 "panel.update" = "Cập nhật";
 "hint.hideNotch" = "Hej! Nhấp vào đây để ẩn tai thỏ.";
 "menu.checkForUpdates" = "Kiểm tra cập nhật…";
-"alert.update.title" = "Đã có HideNotch %@.";
-"alert.update.message" = "Bạn đang dùng phiên bản %@.";
-"alert.update.download" = "Tải về";
-"alert.update.later" = "Để sau";
-"alert.upToDate.title" = "HideNotch đã là phiên bản mới nhất.";
-"alert.upToDate.message" = "Phiên bản %@ là phiên bản mới nhất.";
-"alert.updateFailed.title" = "Không thể kiểm tra cập nhật.";

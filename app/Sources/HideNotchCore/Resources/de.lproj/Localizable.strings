@@ -19,10 +19,3 @@
 "panel.update" = "Aktualisieren";
 "hint.hideNotch" = "Hej! Klick hier, um deine Notch auszublenden.";
 "menu.checkForUpdates" = "Nach Updates suchen …";
-"alert.update.title" = "HideNotch %@ ist verfügbar.";
-"alert.update.message" = "Du hast Version %@.";
-"alert.update.download" = "Herunterladen";
-"alert.update.later" = "Später";
-"alert.upToDate.title" = "HideNotch ist auf dem neuesten Stand.";
-"alert.upToDate.message" = "Version %@ ist die neueste Version.";
-"alert.updateFailed.title" = "Suche nach Updates fehlgeschlagen.";

@@ -19,10 +19,3 @@
 "panel.update" = "Perbarui";
 "hint.hideNotch" = "Hej! Klik di sini untuk menyembunyikan notch.";
 "menu.checkForUpdates" = "Periksa Pembaruan…";
-"alert.update.title" = "HideNotch %@ telah tersedia.";
-"alert.update.message" = "Versi Anda %@.";
-"alert.update.download" = "Unduh";
-"alert.update.later" = "Nanti";
-"alert.upToDate.title" = "HideNotch sudah versi terbaru.";
-"alert.upToDate.message" = "Versi %@ adalah versi terbaru.";
-"alert.updateFailed.title" = "Tidak dapat memeriksa pembaruan.";

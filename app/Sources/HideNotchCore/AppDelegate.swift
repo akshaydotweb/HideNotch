@@ -5,7 +5,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     private let preferences = Preferences()
     private let overlay = OverlayController(screens: SystemScreens(), makeWindow: { BarWindow() },
                                             onEnable: { MenuBarBackground.disable() })
-    private let updates = UpdateChecker()
+    private let updates = Updater()
     private var statusController: StatusItemController?
     private var menuBarBackgroundMonitor: Timer?
 

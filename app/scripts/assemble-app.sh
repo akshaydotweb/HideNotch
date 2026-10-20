@@ -30,12 +30,25 @@ if [ ! -d "$RESOURCE_BUNDLE" ]; then
 fi
 cp -R "$RESOURCE_BUNDLE" "$APP/Contents/Resources/"
 
-if [ "$IDENTITY" = "-" ]; then
-    codesign --force --sign - "$APP"
-else
-    codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
-fi
+# The binary looks for Sparkle.framework next to itself; the bundle keeps it in Contents/Frameworks.
+install_name_tool -add_rpath @executable_path/../Frameworks "$APP/Contents/MacOS/HideNotch"
+mkdir -p "$APP/Contents/Frameworks"
+ditto .build/release/Sparkle.framework "$APP/Contents/Frameworks/Sparkle.framework"
 
-codesign --verify --strict --verbose=2 "$APP"
+if [ "$IDENTITY" = "-" ]; then
+    SIGN=(codesign --force --sign -)
+else
+    SIGN=(codesign --force --options runtime --timestamp --sign "$IDENTITY")
+fi
+# Sign inside out: Sparkle's helpers, the framework, then the app.
+SPARKLE="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
+"${SIGN[@]}" "$SPARKLE/XPCServices/Installer.xpc"
+"${SIGN[@]}" --preserve-metadata=entitlements "$SPARKLE/XPCServices/Downloader.xpc"
+"${SIGN[@]}" "$SPARKLE/Autoupdate"
+"${SIGN[@]}" "$SPARKLE/Updater.app"
+"${SIGN[@]}" "$APP/Contents/Frameworks/Sparkle.framework"
+"${SIGN[@]}" "$APP"
+
+codesign --verify --deep --strict --verbose=2 "$APP"
 
 echo "Assembled $APP"

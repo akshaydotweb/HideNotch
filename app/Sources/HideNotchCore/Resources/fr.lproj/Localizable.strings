@@ -19,10 +19,3 @@
 "panel.update" = "Mettre à jour";
 "hint.hideNotch" = "Hej ! Cliquez ici pour masquer l’encoche.";
 "menu.checkForUpdates" = "Rechercher les mises à jour…";
-"alert.update.title" = "HideNotch %@ est disponible.";
-"alert.update.message" = "Vous avez la version %@.";
-"alert.update.download" = "Télécharger";
-"alert.update.later" = "Plus tard";
-"alert.upToDate.title" = "HideNotch est à jour.";
-"alert.upToDate.message" = "La version %@ est la plus récente.";
-"alert.updateFailed.title" = "Impossible de rechercher les mises à jour.";

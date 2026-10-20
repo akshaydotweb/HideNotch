@@ -19,10 +19,3 @@
 "panel.update" = "อัปเดต";
 "hint.hideNotch" = "Hej! คลิกที่นี่เพื่อซ่อนรอยบาก";
 "menu.checkForUpdates" = "ตรวจหาอัปเดต…";
-"alert.update.title" = "HideNotch %@ พร้อมใช้งานแล้ว";
-"alert.update.message" = "คุณใช้เวอร์ชัน %@";
-"alert.update.download" = "ดาวน์โหลด";
-"alert.update.later" = "ภายหลัง";
-"alert.upToDate.title" = "HideNotch เป็นเวอร์ชันล่าสุดแล้ว";
-"alert.upToDate.message" = "เวอร์ชัน %@ เป็นเวอร์ชันล่าสุด";
-"alert.updateFailed.title" = "ไม่สามารถตรวจหาอัปเดตได้";

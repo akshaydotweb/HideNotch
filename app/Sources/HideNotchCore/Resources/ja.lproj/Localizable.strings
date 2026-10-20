@@ -19,10 +19,3 @@
 "panel.update" = "アップデート";
 "hint.hideNotch" = "Hej! ここをクリックしてノッチを隠しましょう。";
 "menu.checkForUpdates" = "アップデートを確認…";
-"alert.update.title" = "HideNotch %@ が利用可能です。";
-"alert.update.message" = "現在のバージョンは %@ です。";
-"alert.update.download" = "ダウンロード";
-"alert.update.later" = "あとで";
-"alert.upToDate.title" = "HideNotch は最新です。";
-"alert.upToDate.message" = "バージョン %@ が最新バージョンです。";
-"alert.updateFailed.title" = "アップデートを確認できませんでした。";
