@@ -8,6 +8,14 @@ macOS 26 or later.
 
 ## Installation
 
+With [Homebrew](https://brew.sh):
+
+```sh
+brew install --cask niklasravnsborg/tap/hidenotch
+```
+
+Or manually:
+
 1. Download `HideNotch.dmg` from the [latest release](https://github.com/niklasravnsborg/HideNotch/releases/latest).
 2. Open it and drag HideNotch into Applications.
 3. Open HideNotch. It runs in the menu bar and has no Dock icon.
