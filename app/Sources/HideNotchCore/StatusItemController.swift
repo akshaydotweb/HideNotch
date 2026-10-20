@@ -216,6 +216,22 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         syncState()
     }
 
+    /// Turns on launch at login once, the first time HideNotch runs from an Applications folder.
+    /// Elsewhere (a DMG, Downloads) macOS may run a translocated copy whose path won't survive a reboot.
+    public func enableLoginItemOnFirstLaunch(bundlePath: String = Bundle.main.bundlePath,
+                                            home: String = NSHomeDirectory()) {
+        let installed = bundlePath.hasPrefix("/Applications/") || bundlePath.hasPrefix(home + "/Applications/")
+        guard installed, !preferences.didSetUpLoginItem else { return }
+        preferences.didSetUpLoginItem = true
+        guard loginItem.state == .disabled else { return }
+        do {
+            try loginItem.setEnabled(true)
+        } catch {
+            Self.log.error("Login item setup failed: \(error.localizedDescription, privacy: .public)")
+        }
+        syncState()
+    }
+
     func checkForUpdates() {
         popover.close()
         NSApplication.shared.activate()

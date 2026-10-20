@@ -200,4 +200,24 @@ struct StatusItemControllerTests {
         sut.popoverWillShow(Notification(name: NSPopover.willShowNotification))
         #expect(sut.launchAtLoginTitle == L10n.launchAtLoginNeedsApproval)
     }
+
+    @Test(arguments: ["/Applications/HideNotch.app", "/Users/me/Applications/HideNotch.app"])
+    func firstLaunchFromApplicationsEnablesLoginItemOnce(bundlePath: String) {
+        let (sut, _, _) = makeSUT()
+        sut.enableLoginItemOnFirstLaunch(bundlePath: bundlePath, home: "/Users/me")
+        #expect(login.state == .enabled)
+        #expect(sut.isLaunchAtLoginEnabled)
+
+        sut.toggleLoginItem()  // The user turns it off again.
+        sut.enableLoginItemOnFirstLaunch(bundlePath: bundlePath, home: "/Users/me")
+        #expect(login.state == .disabled)
+    }
+
+    @Test func launchOutsideApplicationsLeavesLoginItemForLater() {
+        let (sut, prefs, _) = makeSUT()
+        sut.enableLoginItemOnFirstLaunch(
+            bundlePath: "/private/var/folders/xy/T/AppTranslocation/ABC/d/HideNotch.app", home: "/Users/me")
+        #expect(login.state == .disabled)
+        #expect(!prefs.didSetUpLoginItem)
+    }
 }

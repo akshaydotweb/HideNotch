@@ -5,6 +5,7 @@ public final class Preferences {
     static let showMenuBarIconKey = "showMenuBarIcon"
     static let roundedCornersEnabledKey = "roundedCornersEnabled"
     static let screensWithoutNotchEnabledKey = "screensWithoutNotchEnabled"
+    static let didSetUpLoginItemKey = "didSetUpLoginItem"
 
     private let defaults: UserDefaults
 
@@ -35,5 +36,10 @@ public final class Preferences {
     public var screensWithoutNotchEnabled: Bool {
         get { defaults.bool(forKey: Self.screensWithoutNotchEnabledKey) }
         set { defaults.set(newValue, forKey: Self.screensWithoutNotchEnabledKey) }
+    }
+
+    public var didSetUpLoginItem: Bool {
+        get { defaults.bool(forKey: Self.didSetUpLoginItemKey) }
+        set { defaults.set(newValue, forKey: Self.didSetUpLoginItemKey) }
     }
 }

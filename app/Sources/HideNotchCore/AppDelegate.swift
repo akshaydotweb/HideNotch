@@ -29,6 +29,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem(),
                                           updates: updates)
         status.install()
+        status.enableLoginItemOnFirstLaunch()
         status.checkIconVisibility()
         status.showHint()
         statusController = status
