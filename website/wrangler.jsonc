@@ -1,0 +1,6 @@
+{
+  "name": "hidenotch-website",
+  "compatibility_date": "2026-10-20",
+  "assets": { "directory": "./dist" },
+  "routes": [{ "pattern": "hidenotch.app", "custom_domain": true }]
+}

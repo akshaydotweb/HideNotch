@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun --hot serve.ts",
     "start": "NODE_ENV=production bun serve.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build": "bun build.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
