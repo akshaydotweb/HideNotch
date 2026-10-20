@@ -31,7 +31,12 @@ public enum L10n {
     static var disallowedIconAlertMessage: String { tr("alert.disallowedIcon.message") }
     static var disallowedIconAlertOpenSettings: String { tr("alert.disallowedIcon.openSettings") }
 
-    static func tr(_ key: String, bundle: Bundle = .module) -> String {
+    /// SwiftPM's Bundle.module only looks next to the .app and in the build directory,
+    /// so the packaged app has to find the resource bundle in Contents/Resources itself.
+    static let resources = Bundle.main.url(forResource: "HideNotch_HideNotchCore", withExtension: "bundle")
+        .flatMap(Bundle.init(url:)) ?? .module
+
+    static func tr(_ key: String, bundle: Bundle = resources) -> String {
         bundle.localizedString(forKey: key, value: nil, table: nil)
     }
 }
