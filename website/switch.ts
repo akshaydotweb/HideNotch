@@ -80,3 +80,9 @@ for (const root of document.querySelectorAll<HTMLElement>(".glass-switch")) {
     busy = false;
   });
 }
+
+// The demo starts with the notch visible, then hides it, unless the visitor got there first.
+setTimeout(() => {
+  const root = document.querySelector<HTMLElement>(".glass-switch");
+  if (root && !root.querySelector("input")!.checked) root.click();
+}, 800);
