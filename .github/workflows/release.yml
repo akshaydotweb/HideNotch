@@ -51,7 +51,33 @@ jobs:
           printf '%s' "$NOTARY_KEY_P8" > "$HIDENOTCH_NOTARY_KEY"
           scripts/build-dmg.sh
 
+      # Sparkle in installed apps reads this feed from the latest release and installs the DMG it points to.
+      - name: Create appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          printf '%s' "$SPARKLE_PRIVATE_KEY" > "$RUNNER_TEMP/sparkle.key"
+          SIGNATURE=$(.build/artifacts/sparkle/Sparkle/bin/sign_update --ed-key-file "$RUNNER_TEMP/sparkle.key" dist/HideNotch.dmg)
+          BUILD=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" Resources/Info.plist)
+          MINIMUM_SYSTEM=$(/usr/libexec/PlistBuddy -c "Print :LSMinimumSystemVersion" Resources/Info.plist)
+          cat > dist/appcast.xml <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+            <channel>
+              <title>HideNotch</title>
+              <item>
+                <title>HideNotch ${GITHUB_REF_NAME#v}</title>
+                <pubDate>$(LC_ALL=C date -u "+%a, %d %b %Y %H:%M:%S +0000")</pubDate>
+                <sparkle:version>$BUILD</sparkle:version>
+                <sparkle:shortVersionString>${GITHUB_REF_NAME#v}</sparkle:shortVersionString>
+                <sparkle:minimumSystemVersion>$MINIMUM_SYSTEM</sparkle:minimumSystemVersion>
+                <enclosure url="https://github.com/$GITHUB_REPOSITORY/releases/download/$GITHUB_REF_NAME/HideNotch.dmg" $SIGNATURE type="application/octet-stream"/>
+              </item>
+            </channel>
+          </rss>
+          EOF
+
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/HideNotch.dmg --title "HideNotch ${GITHUB_REF_NAME#v}" --generate-notes
+        run: gh release create "$GITHUB_REF_NAME" dist/HideNotch.dmg dist/appcast.xml --title "HideNotch ${GITHUB_REF_NAME#v}" --generate-notes

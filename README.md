@@ -22,6 +22,7 @@ Click the menu-bar icon to open a panel. The switch at the top turns HideNotch o
 - **Include displays without notch**: also paints the menu bar and corners black on displays without a notch, such as external monitors. Off by default; the setting persists across restarts. Displays without a visible menu bar (auto-hidden, or secondary displays when “Displays have separate Spaces” is off) stay uncovered.
 - **Launch at Login** ("…" menu): when checked, the app starts automatically at login. If the system requires approval in System Settings, the item reads "Launch at Login (Approve in System Settings)"; clicking it again opens the corresponding System Settings page.
 - **Show Menu Bar Icon** ("…" menu): uncheck to hide the icon while keeping the overlay active. A dialog explains how to restore it; Cancel brings it back immediately. Open HideNotch again from Applications, Spotlight, or `open ~/Applications/HideNotch.app` to restore the icon and access the panel. The setting persists across restarts and launch at login. If macOS doesn’t show the icon, for example because HideNotch is turned off under “Allow in the Menu Bar”, launching or reopening HideNotch shows a dialog with a button to open Menu Bar settings.
+- **Check for Updates…** ("…" menu): HideNotch also checks once a day on its own, downloads updates in the background, and installs them when it quits. Once an update is downloaded, an Update button next to the version installs it right away.
 - **Quit** ("…" menu): plays the reverse reveal animation, then quits the app.
 
 ## Languages
@@ -63,12 +64,13 @@ xcrun notarytool store-credentials HideNotch \
 1. Bump `CFBundleShortVersionString` and `CFBundleVersion` in `app/Resources/Info.plist` and commit.
 2. Tag and push: `git tag v0.1.0 && git push origin v0.1.0`.
 
-`.github/workflows/release.yml` checks that the tag matches the app version, runs the tests, builds, signs, and notarizes `HideNotch.dmg`, and publishes it as a GitHub release. It needs these repository secrets:
+`.github/workflows/release.yml` checks that the tag matches the app version, runs the tests, builds, signs, and notarizes `HideNotch.dmg`, and publishes it as a GitHub release together with the `appcast.xml` feed that installed apps update from. It needs these repository secrets:
 
 - `DEVELOPER_ID_CERTIFICATE_P12`: the Developer ID Application certificate with its private key, exported as `.p12` and base64 encoded.
 - `DEVELOPER_ID_CERTIFICATE_PASSWORD`: the password of that `.p12`.
 - `NOTARY_KEY_P8`: the contents of the App Store Connect API key file.
 - `NOTARY_KEY_ID`, `NOTARY_ISSUER_ID`: the key ID and issuer ID shown next to that key in App Store Connect.
+- `SPARKLE_PRIVATE_KEY`: the EdDSA key that signs updates, exported with `generate_keys -x` from Sparkle's `bin` folder (`app/.build/artifacts/sparkle/Sparkle/bin`). Its public half is `SUPublicEDKey` in `Info.plist`. Without this key, installed apps reject every future update, so keep a backup.
 
 ## Contributing
 
