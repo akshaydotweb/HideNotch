@@ -17,6 +17,14 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         overlay.screensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
         overlay.isEnabled = preferences.overlayEnabled
 
+        // The "…" menu's shortcuts only work while it is open; the main menu handles them while the panel is key.
+        let appMenu = NSMenu()
+        appMenu.addItem(withTitle: L10n.quit, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let appMenuItem = NSMenuItem()
+        appMenuItem.submenu = appMenu
+        NSApplication.shared.mainMenu = NSMenu()
+        NSApplication.shared.mainMenu?.addItem(appMenuItem)
+
         let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem())
         status.install()
         status.checkIconVisibility()
