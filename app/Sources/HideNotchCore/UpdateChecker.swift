@@ -7,7 +7,7 @@ import os
 @Observable
 public final class UpdateChecker {
     @ObservationIgnored private static let log = Logger(subsystem: "com.niklasravnsborg.hidenotch", category: "Updates")
-    nonisolated static let latestRelease = URL(string: "https://api.github.com/repos/niklasravnsborg/HideNotch/releases/latest")!
+    nonisolated static let latestRelease = URL(string: "https://github.com/niklasravnsborg/HideNotch/releases/latest")!
     nonisolated static let download = URL(string: "https://github.com/niklasravnsborg/HideNotch/releases/latest/download/HideNotch.dmg")!
 
     /// The newer version, if one is available.
@@ -47,17 +47,15 @@ public final class UpdateChecker {
         return availableVersion
     }
 
-    private struct Release: Decodable {
-        let tagName: String
-    }
-
+    /// GitHub redirects `/releases/latest` to `/releases/tag/<tag>`. Unlike the
+    /// REST API, this isn't rate limited to 60 requests per hour per IP.
     public nonisolated static func fetchLatestTag() async throws -> String {
         var request = URLRequest(url: latestRelease)
-        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try decoder.decode(Release.self, from: data).tagName
+        request.httpMethod = "HEAD"
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200,
+              let url = http.url, url.deletingLastPathComponent().lastPathComponent == "tag"
+        else { throw URLError(.badServerResponse) }
+        return url.lastPathComponent
     }
 }
