@@ -17,6 +17,7 @@
 "alert.disallowedIcon.message" = "Nyalakan HideNotch di “Izinkan di Bar Menu” pada pengaturan Bar Menu. Jika sudah menyala, bar menu mungkin terlalu penuh untuk menampilkannya.";
 "alert.disallowedIcon.openSettings" = "Buka Pengaturan Bar Menu";
 "panel.update" = "Perbarui";
+"hint.hideNotch" = "Hej! Klik di sini untuk menyembunyikan notch.";
 "menu.checkForUpdates" = "Periksa Pembaruan…";
 "alert.update.title" = "HideNotch %@ telah tersedia.";
 "alert.update.message" = "Versi Anda %@.";

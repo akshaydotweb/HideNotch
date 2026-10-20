@@ -17,6 +17,7 @@
 "alert.disallowedIcon.message" = "Aktiviere HideNotch unter „In der Menüleiste erlauben“ in den Menüleisten-Einstellungen. Ist es bereits aktiviert, ist die Menüleiste möglicherweise zu voll, um es anzuzeigen.";
 "alert.disallowedIcon.openSettings" = "Menüleisten-Einstellungen öffnen";
 "panel.update" = "Aktualisieren";
+"hint.hideNotch" = "Hej! Klick hier, um deine Notch auszublenden.";
 "menu.checkForUpdates" = "Nach Updates suchen …";
 "alert.update.title" = "HideNotch %@ ist verfügbar.";
 "alert.update.message" = "Du hast Version %@.";

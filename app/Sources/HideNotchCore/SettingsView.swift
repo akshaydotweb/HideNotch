@@ -86,6 +86,22 @@ struct SettingsView: View {
     }
 }
 
+/// The launch hint: clicking it opens the panel, like clicking the icon.
+struct HintView: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(L10n.hint)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .fixedSize()
+    }
+}
+
 private extension View {
     func card() -> some View {
         background(.quaternary.opacity(0.6))

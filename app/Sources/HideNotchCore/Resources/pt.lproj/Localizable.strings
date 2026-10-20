@@ -17,6 +17,7 @@
 "alert.disallowedIcon.message" = "Ative o HideNotch em “Permitir na barra de menus” nos ajustes da Barra de Menus. Se já estiver ativado, a barra de menus pode estar cheia demais para exibi-lo.";
 "alert.disallowedIcon.openSettings" = "Abrir ajustes da Barra de Menus";
 "panel.update" = "Atualizar";
+"hint.hideNotch" = "Hej! Clique aqui para ocultar o notch.";
 "menu.checkForUpdates" = "Buscar Atualizações…";
 "alert.update.title" = "HideNotch %@ está disponível.";
 "alert.update.message" = "Você tem a versão %@.";

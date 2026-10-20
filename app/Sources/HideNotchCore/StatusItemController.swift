@@ -16,7 +16,9 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     @ObservationIgnored private let informDisallowedIcon: @MainActor () -> Void
     @ObservationIgnored private(set) var statusItem: NSStatusItem?
     @ObservationIgnored let popover = NSPopover()
+    @ObservationIgnored private let hint = NSPopover()
     @ObservationIgnored private var outsideClickMonitor: Any?
+    @ObservationIgnored private var hintClickMonitor: Any?
     @ObservationIgnored let updates: UpdateChecker
     private var loginItemFailed = false
 
@@ -48,6 +50,11 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         let content = NSHostingController(rootView: SettingsView(controller: self))
         content.sizingOptions = .preferredContentSize
         popover.contentViewController = content
+
+        hint.behavior = .applicationDefined
+        let hintContent = NSHostingController(rootView: HintView { [weak self] in self?.togglePopover() })
+        hintContent.sizingOptions = .preferredContentSize
+        hint.contentViewController = hintContent
         syncState()
     }
 
@@ -61,6 +68,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     }
 
     @objc private func togglePopover() {
+        closeHint()
         guard let button = statusItem?.button else { return }
         if popover.isShown {
             popover.performClose(nil)
@@ -83,6 +91,26 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     public func popoverDidClose(_ notification: Notification) {
         if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
         outsideClickMonitor = nil
+    }
+
+    /// Points at the icon when HideNotch launches with the notch still visible.
+    public func showHint(after delay: Duration = .seconds(1)) {
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: delay)
+            guard let self, !self.preferences.overlayEnabled, !self.popover.isShown,
+                  let button = self.statusItem?.button,
+                  button.window?.occlusionState.contains(.visible) == true else { return }
+            self.hint.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            self.hintClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+                MainActor.assumeIsolated { self?.closeHint() }
+            }
+        }
+    }
+
+    private func closeHint() {
+        hint.close()
+        if let hintClickMonitor { NSEvent.removeMonitor(hintClickMonitor) }
+        hintClickMonitor = nil
     }
 
     func toggleRoundedCorners() {

@@ -17,6 +17,7 @@
 "alert.disallowedIcon.message" = "Turn on HideNotch under “Allow in the Menu Bar” in Menu Bar settings. If it’s already on, the menu bar may be too full to show it.";
 "alert.disallowedIcon.openSettings" = "Open Menu Bar Settings";
 "panel.update" = "Update";
+"hint.hideNotch" = "Hej! Click here to hide your notch.";
 "menu.checkForUpdates" = "Check for Updates…";
 "alert.update.title" = "HideNotch %@ is available.";
 "alert.update.message" = "You have version %@.";

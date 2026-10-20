@@ -30,6 +30,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
                                           updates: updates)
         status.install()
         status.checkIconVisibility()
+        status.showHint()
         statusController = status
         updates.start()
 

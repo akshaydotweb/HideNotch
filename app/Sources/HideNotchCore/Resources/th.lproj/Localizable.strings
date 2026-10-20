@@ -17,6 +17,7 @@
 "alert.disallowedIcon.message" = "เปิด HideNotch ใน “อนุญาตในแถบเมนู” ในการตั้งค่าแถบเมนู หากเปิดอยู่แล้ว แถบเมนูอาจเต็มเกินกว่าจะแสดงไอคอนได้";
 "alert.disallowedIcon.openSettings" = "เปิดการตั้งค่าแถบเมนู";
 "panel.update" = "อัปเดต";
+"hint.hideNotch" = "Hej! คลิกที่นี่เพื่อซ่อนรอยบาก";
 "menu.checkForUpdates" = "ตรวจหาอัปเดต…";
 "alert.update.title" = "HideNotch %@ พร้อมใช้งานแล้ว";
 "alert.update.message" = "คุณใช้เวอร์ชัน %@";

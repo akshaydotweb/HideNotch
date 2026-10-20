@@ -6,7 +6,7 @@ public enum L10n {
     static let keys = [
         "menu.hideNotch", "menu.roundedScreenCorners", "menu.displaysWithoutNotch", "menu.launchAtLogin", "menu.launchAtLogin.failed",
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit", "panel.description",
-        "panel.update", "menu.checkForUpdates",
+        "panel.update", "hint.hideNotch", "menu.checkForUpdates",
         "alert.update.title", "alert.update.message", "alert.update.download", "alert.update.later",
         "alert.upToDate.title", "alert.upToDate.message", "alert.updateFailed.title",
         "alert.systemBackground.title", "alert.systemBackground.message",
@@ -24,6 +24,7 @@ public enum L10n {
     static var showMenuBarIcon: String { tr("menu.showMenuBarIcon") }
     static var description: String { tr("panel.description") }
     static var update: String { tr("panel.update") }
+    static var hint: String { tr("hint.hideNotch") }
     static var checkForUpdates: String { tr("menu.checkForUpdates") }
     static func updateAlertTitle(_ version: String) -> String { String(format: tr("alert.update.title"), version) }
     static func updateAlertMessage(_ version: String) -> String { String(format: tr("alert.update.message"), version) }
