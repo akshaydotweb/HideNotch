@@ -82,7 +82,12 @@ for (const root of document.querySelectorAll<HTMLElement>(".glass-switch")) {
 }
 
 // The demo starts with the notch visible, then hides it, unless the visitor got there first.
-setTimeout(() => {
-  const root = document.querySelector<HTMLElement>(".glass-switch");
-  if (root && !root.querySelector("input")!.checked) root.click();
-}, 800);
+// Its transitions only turn on with the first toggle, so layout settling on load can't play them.
+const demo = document.querySelector<HTMLElement>(".glass-switch");
+if (demo) {
+  const input = demo.querySelector("input")!;
+  input.addEventListener("change", () => (demo.closest<HTMLElement>(".group")!.dataset.ready = ""), { once: true });
+  setTimeout(() => {
+    if (!input.checked) demo.click();
+  }, 800);
+}

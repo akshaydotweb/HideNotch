@@ -27,7 +27,9 @@
     </header>
 
     <main>
-      <!-- Hero with interactive demo: the checkbox drives every transition through group-has-checked. -->
+      <!-- Hero with interactive demo: the checkbox drives every transition through group-has-checked.
+           transition-none prevents the default transition-property: all from animating on load.
+           switch.ts sets data-ready on the first toggle to enable the demo transitions. -->
       <section class="group mx-auto max-w-5xl px-6 pt-16 pb-20 text-center sm:pt-24">
         <h1 class="text-5xl font-semibold tracking-tight text-balance sm:text-6xl">
           Make the notch disappear.
@@ -66,16 +68,16 @@
               <!-- Rounded corners, as in the app: the upper pair slides down together with the
                    black strip, the lower pair grows into place. -->
               <div
-                class="pointer-events-none absolute inset-x-0 top-[2.45cqw] h-[1.1cqw] -translate-y-[3.55cqw] transition-transform duration-600 ease-in-out group-has-checked:translate-y-0"
+                class="pointer-events-none absolute inset-x-0 top-[2.45cqw] h-[1.1cqw] -translate-y-[3.55cqw] transition-none group-data-ready:transition-transform duration-600 ease-in-out group-has-checked:translate-y-0"
               >
                 <div class="absolute left-0 size-[1.1cqw] bg-[radial-gradient(circle_farthest-side_at_100%_100%,transparent_96%,black)]"></div>
                 <div class="absolute right-0 size-[1.1cqw] bg-[radial-gradient(circle_farthest-side_at_0_100%,transparent_96%,black)]"></div>
               </div>
               <div
-                class="pointer-events-none absolute bottom-0 left-0 size-0 bg-[radial-gradient(circle_farthest-side_at_100%_0,transparent_96%,black)] transition-[width,height] duration-600 ease-in-out group-has-checked:size-[1.1cqw]"
+                class="pointer-events-none absolute bottom-0 left-0 size-0 bg-[radial-gradient(circle_farthest-side_at_100%_0,transparent_96%,black)] transition-none group-data-ready:transition-[width,height] duration-600 ease-in-out group-has-checked:size-[1.1cqw]"
               ></div>
               <div
-                class="pointer-events-none absolute right-0 bottom-0 size-0 bg-[radial-gradient(circle_farthest-side_at_0_0,transparent_96%,black)] transition-[width,height] duration-600 ease-in-out group-has-checked:size-[1.1cqw]"
+                class="pointer-events-none absolute right-0 bottom-0 size-0 bg-[radial-gradient(circle_farthest-side_at_0_0,transparent_96%,black)] transition-none group-data-ready:transition-[width,height] duration-600 ease-in-out group-has-checked:size-[1.1cqw]"
               ></div>
 
               <!-- Menu bar. HideNotch slides a black strip in behind its contents. -->
@@ -83,7 +85,7 @@
                 class="absolute inset-x-0 top-0 flex h-[2.45cqw] items-center justify-between overflow-hidden px-[1.4cqw] text-[0.9cqw] text-white text-shadow-[0_0_0.3cqw_rgb(0_0_0/0.35)]"
               >
                 <div
-                  class="absolute inset-0 -translate-y-[3.55cqw] bg-black transition-transform duration-600 ease-in-out group-has-checked:translate-y-0"
+                  class="absolute inset-0 -translate-y-[3.55cqw] bg-black transition-none group-data-ready:transition-transform duration-600 ease-in-out group-has-checked:translate-y-0"
                 ></div>
                 <div class="relative flex items-center gap-[1.4cqw]">
                   <span class="font-semibold">Finder</span>
