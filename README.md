@@ -35,7 +35,7 @@ The "…" menu has launch at login, update checks, and an option to hide the men
 ## Known limitations
 
 - The notch stays visible on the lock screen and the login window, because macOS doesn't show app windows there.
-- Screen Time's Downtime can hide the black overlay while HideNotch's menu bar icon remains visible. HideNotch may also be missing from Screen Time's Always Allowed list, so adding it there is not a reliable workaround.
+- Screen Time's Downtime can hide the black overlay while HideNotch's menu bar icon remains visible. To keep it working, add HideNotch to Screen Time's Always Allowed list. If HideNotch doesn't appear in that list, restart your Mac.
 
 ## License
 
