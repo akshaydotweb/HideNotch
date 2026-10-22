@@ -13,8 +13,8 @@
 "alert.hiddenIcon.cancel" = "Cancelar";
 "alert.systemBackground.title" = "Hide Notch foi desativado.";
 "alert.systemBackground.message" = "Hide Notch exige que “Mostrar fundo da barra de menus” esteja desativado. Vamos desativá-lo quando você ocultar o notch novamente.";
-"alert.disallowedIcon.title" = "O ícone do HideNotch não está visível na barra de menus.";
-"alert.disallowedIcon.message" = "Ative o HideNotch em “Permitir na barra de menus” nos ajustes da Barra de Menus. Se já estiver ativado, a barra de menus pode estar cheia demais para exibi-lo.";
+"alert.disallowedIcon.title" = "O HideNotch não pode mostrar o ícone na barra de menus";
+"alert.disallowedIcon.message" = "Ative o HideNotch em “Permitir na barra de menus” nos ajustes da Barra de Menus.";
 "alert.disallowedIcon.openSettings" = "Abrir ajustes da Barra de Menus";
 "panel.update" = "Atualizar";
 "hint.hideNotch" = "Hej! Clique aqui para ocultar o notch.";

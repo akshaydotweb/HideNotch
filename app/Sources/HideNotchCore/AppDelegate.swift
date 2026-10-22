@@ -85,6 +85,9 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
     public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         statusController?.restoreMenuBarIcon()
+        // An existing status item keeps reporting itself visible after "Allow in the Menu Bar" is turned
+        // off. A new one picks up the current setting.
+        statusController?.install()
         statusController?.checkIconVisibility()
         return false
     }

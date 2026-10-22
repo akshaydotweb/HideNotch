@@ -13,8 +13,8 @@
 "alert.hiddenIcon.cancel" = "キャンセル";
 "alert.systemBackground.title" = "Hide Notchをオフにしました。";
 "alert.systemBackground.message" = "Hide Notchには「メニューバーの背景を表示」をオフにする必要があります。再びノッチを隠すと、自動的にオフにします。";
-"alert.disallowedIcon.title" = "HideNotchのメニューバーアイコンが表示されていません。";
-"alert.disallowedIcon.message" = "「メニューバー」設定の「メニューバーでの表示を許可」でHideNotchをオンにしてください。すでにオンの場合は、メニューバーに表示する余裕がない可能性があります。";
+"alert.disallowedIcon.title" = "HideNotchはメニューバーアイコンを表示できません";
+"alert.disallowedIcon.message" = "「メニューバー」設定の「メニューバーでの表示を許可」でHideNotchをオンにしてください。";
 "alert.disallowedIcon.openSettings" = "メニューバー設定を開く";
 "panel.update" = "アップデート";
 "hint.hideNotch" = "Hej! ここをクリックしてノッチを隠しましょう。";

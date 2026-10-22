@@ -93,6 +93,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     }
 
     public func install() {
+        if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.button?.image = NotchIcon.menuBarImage()
         item.button?.target = self

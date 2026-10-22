@@ -13,8 +13,8 @@
 "alert.hiddenIcon.cancel" = "ยกเลิก";
 "alert.systemBackground.title" = "ปิด Hide Notch แล้ว";
 "alert.systemBackground.message" = "Hide Notch ต้องปิด “แสดงพื้นหลังแถบเมนู” เราจะปิดให้คุณเมื่อคุณซ่อนรอยบากอีกครั้ง";
-"alert.disallowedIcon.title" = "ไอคอนแถบเมนูของ HideNotch ไม่แสดง";
-"alert.disallowedIcon.message" = "เปิด HideNotch ใน “อนุญาตในแถบเมนู” ในการตั้งค่าแถบเมนู หากเปิดอยู่แล้ว แถบเมนูอาจเต็มเกินกว่าจะแสดงไอคอนได้";
+"alert.disallowedIcon.title" = "HideNotch แสดงไอคอนแถบเมนูไม่ได้";
+"alert.disallowedIcon.message" = "เปิด HideNotch ใน “อนุญาตในแถบเมนู” ในการตั้งค่าแถบเมนู";
 "alert.disallowedIcon.openSettings" = "เปิดการตั้งค่าแถบเมนู";
 "panel.update" = "อัปเดต";
 "hint.hideNotch" = "Hej! คลิกที่นี่เพื่อซ่อนรอยบาก";

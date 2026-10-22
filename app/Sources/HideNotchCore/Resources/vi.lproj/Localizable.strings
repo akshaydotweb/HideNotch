@@ -13,8 +13,8 @@
 "alert.hiddenIcon.cancel" = "Hủy";
 "alert.systemBackground.title" = "Hide Notch đã được tắt.";
 "alert.systemBackground.message" = "Hide Notch yêu cầu tắt “Hiển thị nền thanh menu”. Chúng tôi sẽ tắt tùy chọn này khi bạn ẩn tai thỏ lần nữa.";
-"alert.disallowedIcon.title" = "Biểu tượng HideNotch trên thanh menu không hiển thị.";
-"alert.disallowedIcon.message" = "Bật HideNotch trong “Cho phép trên thanh menu” ở cài đặt Thanh menu. Nếu đã bật, thanh menu có thể quá đầy để hiển thị biểu tượng.";
+"alert.disallowedIcon.title" = "HideNotch không thể hiển thị biểu tượng trên thanh menu";
+"alert.disallowedIcon.message" = "Bật HideNotch trong “Cho phép trên thanh menu” ở cài đặt Thanh menu.";
 "alert.disallowedIcon.openSettings" = "Mở cài đặt Thanh menu";
 "panel.update" = "Cập nhật";
 "hint.hideNotch" = "Hej! Nhấp vào đây để ẩn tai thỏ.";
