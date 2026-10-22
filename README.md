@@ -32,7 +32,7 @@ Click the menu bar icon to open the panel:
 
 HideNotch also paints the bar, and the rounded corners if they are on, into a copy of your wallpaper. macOS shows the wallpaper behind the menu bar once 10 or more windows reach the top of the screen, and the painted copy keeps the bar black then too. Turning HideNotch off or quitting it puts your original wallpaper back.
 
-The "…" menu has launch at login, update checks, and an option to hide the menu bar icon. If you hide it, open HideNotch again from Applications or Spotlight to get it back.
+The "…" menu has launch at login, update checks, a link to the website, and an option to hide the menu bar icon. If you hide it, open HideNotch again from Applications or Spotlight to get it back.
 
 ## Known limitations
 
