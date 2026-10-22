@@ -38,7 +38,9 @@ struct SettingsView: View {
                 Toggle(controller.launchAtLoginTitle,
                        isOn: binding(controller.isLaunchAtLoginEnabled, controller.toggleLoginItem))
                 Toggle(L10n.showMenuBarIcon, isOn: binding(controller.isMenuBarIconShown, controller.toggleMenuBarIcon))
+                Divider()
                 Button(L10n.checkForUpdates, action: controller.checkForUpdates)
+                Button(L10n.visitWebsite, action: controller.visitWebsite)
                 Divider()
                 Button(L10n.quit, action: controller.quit)
                     .keyboardShortcut("q")

@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "Abrir ajustes da Barra de Menus";
 "panel.update" = "Atualizar";
 "hint.hideNotch" = "Hej! Clique aqui para ocultar o notch.";
-"menu.checkForUpdates" = "Buscar Atualizações…";
+"menu.checkForUpdates" = "Buscar Atualizações";
 "panel.animatedWallpaper" = "Seu papel de parede é animado, então o HideNotch não consegue pintar a barra nele. Com 10 ou mais janelas no topo da tela, o macOS mostra o papel de parede em vez da barra preta. Escolha um papel de parede estático ou dinâmico para mantê-la preta.";
 "warning.dontShowAgain" = "Não Mostrar Novamente";
+"menu.visitWebsite" = "Visitar o Site";

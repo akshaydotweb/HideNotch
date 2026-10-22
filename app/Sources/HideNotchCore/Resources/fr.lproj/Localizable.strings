@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "Ouvrir les réglages Barre des menus";
 "panel.update" = "Mettre à jour";
 "hint.hideNotch" = "Hej ! Cliquez ici pour masquer l’encoche.";
-"menu.checkForUpdates" = "Rechercher les mises à jour…";
+"menu.checkForUpdates" = "Rechercher les mises à jour";
 "panel.animatedWallpaper" = "Votre fond d’écran est animé, HideNotch ne peut donc pas y peindre la barre. Avec 10 fenêtres ou plus en haut de l’écran, macOS affiche alors le fond d’écran au lieu de la barre noire. Choisissez un fond d’écran fixe ou dynamique pour la garder noire.";
 "warning.dontShowAgain" = "Ne plus afficher";
+"menu.visitWebsite" = "Consulter le site web";

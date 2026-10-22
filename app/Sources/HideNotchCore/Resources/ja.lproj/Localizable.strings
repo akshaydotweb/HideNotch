@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "メニューバー設定を開く";
 "panel.update" = "アップデート";
 "hint.hideNotch" = "Hej! ここをクリックしてノッチを隠しましょう。";
-"menu.checkForUpdates" = "アップデートを確認…";
+"menu.checkForUpdates" = "アップデートを確認";
 "panel.animatedWallpaper" = "デスクトップピクチャがアニメーションするため、HideNotchはバーを描き込めません。画面上端に10個以上のウインドウがあると、macOSは黒いバーの代わりにデスクトップピクチャを表示します。黒いままにするには、静止画またはダイナミックデスクトップを選択してください。";
 "warning.dontShowAgain" = "今後表示しない";
+"menu.visitWebsite" = "Webサイトを見る";

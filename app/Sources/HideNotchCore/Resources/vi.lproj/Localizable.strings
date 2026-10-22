@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "Mở cài đặt Thanh menu";
 "panel.update" = "Cập nhật";
 "hint.hideNotch" = "Hej! Nhấp vào đây để ẩn tai thỏ.";
-"menu.checkForUpdates" = "Kiểm tra cập nhật…";
+"menu.checkForUpdates" = "Kiểm tra cập nhật";
 "panel.animatedWallpaper" = "Hình nền của bạn có chuyển động, nên HideNotch không thể vẽ thanh vào đó. Khi có từ 10 cửa sổ trở lên ở đầu màn hình, macOS sẽ hiển thị hình nền thay cho thanh màu đen. Hãy chọn hình nền tĩnh hoặc hình nền động theo thời gian để giữ thanh màu đen.";
 "warning.dontShowAgain" = "Không hiển thị lại";
+"menu.visitWebsite" = "Truy cập trang web";

@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "Buka Pengaturan Bar Menu";
 "panel.update" = "Perbarui";
 "hint.hideNotch" = "Hej! Klik di sini untuk menyembunyikan notch.";
-"menu.checkForUpdates" = "Periksa Pembaruan…";
+"menu.checkForUpdates" = "Periksa Pembaruan";
 "panel.animatedWallpaper" = "Wallpaper Anda beranimasi, jadi HideNotch tidak dapat melukis bar ke dalamnya. Dengan 10 jendela atau lebih di bagian atas layar, macOS lalu menampilkan wallpaper alih-alih bar hitam. Pilih wallpaper diam atau dinamis agar tetap hitam.";
 "warning.dontShowAgain" = "Jangan Tampilkan Lagi";
+"menu.visitWebsite" = "Kunjungi Situs Web";

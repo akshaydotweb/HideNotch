@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "메뉴 막대 설정 열기";
 "panel.update" = "업데이트";
 "hint.hideNotch" = "Hej! 여기를 클릭해 노치를 숨기세요.";
-"menu.checkForUpdates" = "업데이트 확인…";
+"menu.checkForUpdates" = "업데이트 확인";
 "panel.animatedWallpaper" = "배경화면이 움직이는 배경화면이라 HideNotch가 막대를 그려 넣을 수 없습니다. 화면 상단에 윈도우가 10개 이상 있으면 macOS가 검은색 막대 대신 배경화면을 표시합니다. 검은색으로 유지하려면 정지 또는 다이내믹 배경화면을 선택하세요.";
 "warning.dontShowAgain" = "다시 보지 않기";
+"menu.visitWebsite" = "웹사이트 방문";

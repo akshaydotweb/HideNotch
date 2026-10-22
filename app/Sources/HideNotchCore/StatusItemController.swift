@@ -370,6 +370,11 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         syncState()
     }
 
+    func visitWebsite() {
+        popover.close()
+        NSWorkspace.shared.open(URL(string: "https://hidenotch.app")!)
+    }
+
     func checkForUpdates() {
         popover.close()
         NSApplication.shared.activate()

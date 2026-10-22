@@ -18,6 +18,7 @@
 "alert.disallowedIcon.openSettings" = "Menüleisten-Einstellungen öffnen";
 "panel.update" = "Aktualisieren";
 "hint.hideNotch" = "Hej! Klick hier, um deine Notch auszublenden.";
-"menu.checkForUpdates" = "Nach Updates suchen …";
+"menu.checkForUpdates" = "Nach Updates suchen";
 "panel.animatedWallpaper" = "Dein Hintergrundbild ist animiert, daher kann HideNotch die Leiste nicht hineinmalen. Bei 10 oder mehr Fenstern am oberen Bildschirmrand zeigt macOS dann das Hintergrundbild statt der schwarzen Leiste. Wähle ein statisches oder dynamisches Hintergrundbild, damit sie schwarz bleibt.";
 "warning.dontShowAgain" = "Nicht mehr anzeigen";
+"menu.visitWebsite" = "Website besuchen";
