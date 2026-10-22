@@ -3,7 +3,7 @@ import AppKit
 @MainActor
 public final class AppDelegate: NSObject, NSApplicationDelegate {
     private let preferences = Preferences()
-    private let overlay = OverlayController(screens: SystemScreens(), makeWindow: { BarWindow() },
+    private let overlay = OverlayController(screens: SystemScreens(), makeWindow: { ScreenMask() },
                                             onEnable: { MenuBarBackground.disable() })
     private let updates = Updater()
     private var statusController: StatusItemController?

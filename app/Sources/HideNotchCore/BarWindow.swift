@@ -15,11 +15,49 @@ public extension BarWindowHosting {
     }
 }
 
-public final class BarWindow: NSWindow, BarWindowHosting {
+/// Covers one screen with two windows: the menu bar strip with the corners below it, and a strip
+/// with the bottom corners. A full-screen window would keep Mission Control from showing other
+/// windows' previews.
+public final class ScreenMask: BarWindowHosting {
+    let pieces = [BarWindow(), BarWindow()]
+    public private(set) var frame: CGRect = .zero
+
+    public init() {}
+
+    public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool, animated: Bool) {
+        frame = rect
+        let corner = ScreenMaskView.cornerRadius
+        let top = menuBarHeight + corner
+        let rects = [
+            CGRect(x: rect.minX, y: rect.maxY - top, width: rect.width, height: top),
+            CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: corner),
+        ]
+        for (piece, pieceRect) in zip(pieces, rects) {
+            piece.show(at: pieceRect, screen: rect, menuBarHeight: menuBarHeight,
+                       roundedCornersEnabled: roundedCornersEnabled, animated: animated)
+        }
+    }
+
+    public func hide() {
+        for piece in pieces { piece.hide() }
+    }
+
+    public func hide(animated: Bool, completion: @escaping @MainActor () -> Void) {
+        var remaining = pieces.count
+        for piece in pieces {
+            piece.hide(animated: animated) {
+                remaining -= 1
+                if remaining == 0 { completion() }
+            }
+        }
+    }
+}
+
+public final class BarWindow: NSWindow {
     private var isHiding = false
     private var hideCompletions: [@MainActor () -> Void] = []
-    /// One below the system menu bar so menu titles and status items draw on top.
-    public static let barLevel = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue - 1)
+    /// Above app windows and their panels, but below Mission Control, whose Spaces bar sits at 14.
+    public static let barLevel = NSWindow.Level(rawValue: 13)
 
     public init() {
         super.init(contentRect: .zero, styleMask: .borderless, backing: .buffered, defer: true)
@@ -34,7 +72,10 @@ public final class BarWindow: NSWindow, BarWindowHosting {
         isReleasedWhenClosed = false
         level = Self.barLevel
         // No .fullScreenAuxiliary: the bar must not appear in full-screen spaces.
+        // .stationary keeps it in place when Show Desktop moves the windows aside.
         collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
+        // Keeps the bar out of window captures, like Mission Control's Space previews and screenshots.
+        sharingType = .none
     }
 
     /// AppKit otherwise pushes the window below the menu bar, over app title bars.
@@ -42,14 +83,16 @@ public final class BarWindow: NSWindow, BarWindowHosting {
         frameRect
     }
 
-    public func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool = true,
-                     animated: Bool = true) {
+    /// Shows the part of the screen mask that falls inside `rect`. Without a `screen`, the window is the screen.
+    public func show(at rect: CGRect, screen: CGRect? = nil, menuBarHeight: CGFloat,
+                     roundedCornersEnabled: Bool = true, animated: Bool = true) {
         let wasVisible = isVisible
         let wasHiding = isHiding
         isHiding = false
         hideCompletions.removeAll()
         let mask = contentView as? ScreenMaskView
         mask?.menuBarHeight = menuBarHeight
+        mask?.canvas = screen.map { $0.offsetBy(dx: -rect.minX, dy: -rect.minY) }
         mask?.setRoundedCornersEnabled(roundedCornersEnabled, animated: animated && wasVisible)
         if !animated {
             mask?.revealProgress = 1
@@ -132,9 +175,15 @@ final class ScreenMaskView: NSView {
         didSet { needsDisplay = true }
     }
 
+    /// The whole screen in view coordinates, when the view shows only part of it.
+    var canvas: CGRect? {
+        didSet { needsDisplay = true }
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         guard let context = NSGraphicsContext.current?.cgContext else { return }
-        context.clear(bounds)
+        context.clear(self.bounds)
+        let bounds = canvas ?? self.bounds
         let desktop = CGRect(
             x: bounds.minX, y: bounds.minY,
             width: bounds.width, height: max(0, bounds.height - menuBarHeight))

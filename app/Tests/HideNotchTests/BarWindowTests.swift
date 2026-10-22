@@ -11,8 +11,10 @@ struct BarWindowTests {
         #expect(window.constrainFrameRect(rect, to: NSScreen.main) == rect)
     }
 
-    @Test func sitsJustBelowMenuBarLevel() {
-        #expect(BarWindow().level.rawValue == NSWindow.Level.mainMenu.rawValue - 1)
+    @Test func sitsAboveAppPanelsButBelowMissionControl() {
+        let level = BarWindow().level
+        #expect(level > .modalPanel)
+        #expect(level.rawValue < 14)
     }
 
     @Test func isTransparentAndClickThrough() {
@@ -37,6 +39,21 @@ struct BarWindowTests {
         #expect(behavior.contains(.stationary))
         #expect(behavior.contains(.ignoresCycle))
         #expect(!behavior.contains(.fullScreenAuxiliary))
+    }
+
+    @Test func screenMaskCoversOnlyTheTopAndBottomEdges() throws {
+        let mask = ScreenMask()
+        defer { mask.hide() }
+        let screen = CGRect(x: 100, y: 0, width: 1800, height: 1169)
+        mask.show(at: screen, menuBarHeight: 39, roundedCornersEnabled: true, animated: false)
+        #expect(mask.frame == screen)
+        #expect(mask.pieces.map(\.frame) == [
+            CGRect(x: 100, y: 1114, width: 1800, height: 55),
+            CGRect(x: 100, y: 0, width: 1800, height: 16),
+        ])
+        // Each piece draws its part of the whole screen's mask.
+        let top = try #require(mask.pieces[0].contentView as? ScreenMaskView)
+        #expect(top.canvas == CGRect(x: 0, y: -1114, width: 1800, height: 1169))
     }
 
     @Test func showMovesAndHideOrdersOut() {
