@@ -91,6 +91,21 @@ struct OverlayControllerTests {
         #expect(!factory.made[1].isShown)
     }
 
+    @Test func excludingScreensWithoutNotchAnimatesOutTheirWindowOnly() {
+        screens.list = [Screens.external, Screens.notched]
+        let controller = makeController()
+        controller.isEnabled = true
+        controller.screensWithoutNotchEnabled = true
+        let (notched, external) = (factory.made[0], factory.made[1])
+        external.delaysHide = true
+        controller.screensWithoutNotchEnabled = false
+        #expect(controller.windows.count == 1)
+        #expect(notched.frame == Screens.notched.frame)
+        #expect(external.isShown)
+        external.completeHide()
+        #expect(!external.isShown)
+    }
+
     @Test func refreshWhileDisabledCreatesNothing() {
         screens.list = [Screens.notched]
         let controller = makeController()

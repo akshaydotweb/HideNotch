@@ -77,11 +77,15 @@ public final class OverlayController {
                 for: screen, includingScreensWithoutNotch: screensWithoutNotchEnabled) else { return nil }
             return (screen.frame, bar.height)
         }
-        while windows.count > layouts.count {
-            windows.removeLast().hide()
+        // Keep each screen's window, so a removed screen's window is the one that animates out.
+        // Screens that only changed size reuse a leftover window instead of animating a new one in.
+        var unmatched = windows
+        let matched = layouts.map { layout in
+            unmatched.firstIndex { $0.frame == layout.frame }.map { unmatched.remove(at: $0) }
         }
-        while windows.count < layouts.count {
-            windows.append(makeWindow())
+        windows = matched.map { $0 ?? (unmatched.isEmpty ? makeWindow() : unmatched.removeFirst()) }
+        for window in unmatched {
+            window.hide(animated: animated) { _ = window }
         }
         for (window, layout) in zip(windows, layouts) {
             window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight,
