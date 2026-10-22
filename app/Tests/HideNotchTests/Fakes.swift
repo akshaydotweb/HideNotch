@@ -15,6 +15,8 @@ final class FakeWindow: BarWindowHosting {
     var roundedCornersEnabled = true
     var animatedShow = true
     var delaysHide = false
+    var isBarVisible = true
+    func setBarVisible(_ visible: Bool) { isBarVisible = visible }
     private var hideCompletions: [@MainActor () -> Void] = []
     func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool, animated: Bool) {
         frame = rect

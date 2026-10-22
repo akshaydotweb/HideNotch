@@ -24,6 +24,18 @@ public final class OverlayController {
     private(set) var windows: [BarWindowHosting] = []
     private(set) var isSuspended = false
 
+    /// Hides the windows without animation while the wallpaper shows the same black.
+    public var isParked = false {
+        didSet {
+            guard isParked != oldValue else { return }
+            if isParked {
+                for window in windows { window.hide() }
+            } else {
+                refresh(animated: false)
+            }
+        }
+    }
+
     public var isEnabled = false {
         didSet {
             if isEnabled && !oldValue { onEnable() }
@@ -67,7 +79,7 @@ public final class OverlayController {
     }
 
     public func refresh(animated: Bool = true) {
-        guard !isSuspended else { return }
+        guard !isSuspended, !isParked else { return }
         guard isEnabled else {
             hideAll(completion: {})
             return
@@ -90,6 +102,13 @@ public final class OverlayController {
         for (window, layout) in zip(windows, layouts) {
             window.show(at: layout.frame, menuBarHeight: layout.menuBarHeight,
                         roundedCornersEnabled: roundedCornersEnabled, animated: animated)
+        }
+    }
+
+    /// Fades out the bar on screens where macOS shows the wallpaper behind the menu bar anyway.
+    public func updateCrowding(_ isCrowded: (CGRect) -> Bool) {
+        for window in windows {
+            window.setBarVisible(!isCrowded(window.frame))
         }
     }
 

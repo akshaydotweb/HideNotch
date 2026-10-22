@@ -10,6 +10,10 @@ struct SettingsView: View {
             header
             hero
             options
+            // Only while the bar is gone: macOS shows an animated wallpaper over it.
+            if controller.isOverlayEnabled && !controller.isWallpaperPaintable && controller.isMenuBarCrowded {
+                note(L10n.animatedWallpaper)
+            }
         }
         .padding(16)
         .frame(width: 320)
@@ -80,9 +84,39 @@ struct SettingsView: View {
         .card()
     }
 
+    private func note(_ text: String) -> some View {
+        Label(text, systemImage: "exclamationmark.triangle")
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 4)
+    }
+
     /// The controller owns the state; a toggle only asks it to flip.
     private func binding(_ value: Bool, _ toggle: @escaping () -> Void) -> Binding<Bool> {
         Binding(get: { value }, set: { _ in toggle() })
+    }
+}
+
+/// Shown on its own the first time an animated wallpaper replaces the black bar.
+struct WarningView: View {
+    let dismiss: () -> Void
+    let dismissForever: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label(L10n.animatedWallpaper, systemImage: "exclamationmark.triangle")
+                .fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Spacer()
+                Button(L10n.dontShowAgain, action: dismissForever)
+                Button(L10n.hiddenIconAlertConfirm, action: dismiss)
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(14)
+        .frame(width: 300)
     }
 }
 

@@ -26,6 +26,42 @@ struct StatusItemControllerTests {
     }
 
     @Test(arguments: [true, false])
+    func overlayStepsAsideOnlyForAPaintedWallpaper(paintable: Bool) async throws {
+        let (_, prefs, overlay) = makeSUT(overlayEnabled: false)
+        let sut = StatusItemController(
+            preferences: prefs, overlay: overlay, loginItem: login, confirmHidingIcon: confirm.ask,
+            paintWallpaper: { _, completion in
+                // Like WallpaperPainter, report the result before completing.
+                Task { @MainActor in completion() }
+                return WallpaperState(paintable: paintable, settled: true)
+            })
+        sut.toggleOverlay()
+        #expect(!overlay.isParked)
+        try await Task.sleep(for: .seconds(ScreenMaskAnimation.transitionDuration + 0.2))
+        #expect(overlay.isParked == paintable)
+        sut.toggleOverlay()
+        #expect(!overlay.isParked)
+    }
+
+    @Test func turningOffWaitsForTheWallpaperBeforeHidingTheOverlay() {
+        let (_, prefs, overlay) = makeSUT()
+        var targets: [WallpaperTarget] = []
+        var finish: (@MainActor () -> Void)?
+        let sut = StatusItemController(
+            preferences: prefs, overlay: overlay, loginItem: login, confirmHidingIcon: confirm.ask,
+            paintWallpaper: { target, completion in
+                targets.append(target)
+                finish = completion
+                return WallpaperState(paintable: true, settled: false)
+            })
+        sut.toggleOverlay()
+        #expect(targets.last?.active == false)
+        #expect(overlay.isEnabled)
+        finish?()
+        #expect(!overlay.isEnabled)
+    }
+
+    @Test(arguments: [true, false])
     func togglingCornersUpdatesPreferenceAndOverlayWithoutEnablingIt(overlayEnabled: Bool) {
         let (sut, prefs, overlay) = makeSUT(overlayEnabled: overlayEnabled)
         sut.toggleRoundedCorners()

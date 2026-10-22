@@ -6,6 +6,7 @@ public protocol BarWindowHosting: AnyObject {
     func show(at rect: CGRect, menuBarHeight: CGFloat, roundedCornersEnabled: Bool, animated: Bool)
     func hide()
     func hide(animated: Bool, completion: @escaping @MainActor () -> Void)
+    func setBarVisible(_ visible: Bool)
 }
 
 public extension BarWindowHosting {
@@ -50,6 +51,10 @@ public final class ScreenMask: BarWindowHosting {
                 if remaining == 0 { completion() }
             }
         }
+    }
+
+    public func setBarVisible(_ visible: Bool) {
+        for piece in pieces { piece.setBarVisible(visible) }
     }
 }
 
@@ -114,6 +119,10 @@ public final class BarWindow: NSWindow {
         completions.forEach { $0() }
     }
 
+    public func setBarVisible(_ visible: Bool) {
+        (contentView as? ScreenMaskView)?.fadeBar(visible: visible)
+    }
+
     public func hide(animated: Bool, completion: @escaping @MainActor () -> Void) {
         guard animated, isVisible, let mask = contentView as? ScreenMaskView else {
             hide()
@@ -138,6 +147,22 @@ final class ScreenMaskView: NSView {
 
     var revealProgress: CGFloat = 1 {
         didSet { needsDisplay = true }
+    }
+
+    /// Fades the bar and the corners below it, leaving the bottom corners in place.
+    var barOpacity: CGFloat = 1 {
+        didSet { needsDisplay = true }
+    }
+
+    private var barFade: BarFadeAnimation?
+
+    func fadeBar(visible: Bool) {
+        let target: CGFloat = visible ? 1 : 0
+        guard target != (barFade?.target ?? barOpacity) else { return }
+        barFade?.stop()
+        let fade = BarFadeAnimation(view: self, target: target)
+        barFade = fade
+        fade.start()
     }
 
     var displayedCornerRadius: CGFloat = cornerRadius {
@@ -205,6 +230,7 @@ final class ScreenMaskView: NSView {
         context.clip(to: CGRect(x: bounds.minX, y: bounds.maxY - topHeight,
                                 width: bounds.width, height: topHeight))
         context.translateBy(x: 0, y: topHeight * (1 - revealProgress))
+        context.setAlpha(barOpacity)
         drawMask(radius: topRadius)
         context.restoreGState()
 
@@ -260,6 +286,37 @@ final class ScreenMaskAnimation: NSAnimation {
                 view?.revealProgress = reveal
                 completion?()
             }
+        }
+    }
+}
+
+final class BarFadeAnimation: NSAnimation {
+    private weak var view: ScreenMaskView?
+    private let start: CGFloat
+    let target: CGFloat
+
+    @MainActor init(view: ScreenMaskView, target: CGFloat) {
+        self.view = view
+        self.start = view.barOpacity
+        self.target = target
+        super.init(duration: ScreenMaskAnimation.transitionDuration, animationCurve: .easeInOut)
+        animationBlockingMode = .nonblocking
+        frameRate = 60
+    }
+
+    override var runLoopModesForAnimating: [RunLoop.Mode]? {
+        [.default, .modalPanel, .eventTracking]
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var currentProgress: NSAnimation.Progress {
+        didSet {
+            let view = view
+            let opacity = start + (target - start) * CGFloat(currentValue)
+            MainActor.assumeIsolated { view?.barOpacity = opacity }
         }
     }
 }

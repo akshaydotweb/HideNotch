@@ -6,6 +6,7 @@ public final class Preferences {
     static let roundedCornersEnabledKey = "roundedCornersEnabled"
     static let screensWithoutNotchEnabledKey = "screensWithoutNotchEnabled"
     static let didSetUpLoginItemKey = "didSetUpLoginItem"
+    static let hidesWallpaperWarningKey = "hidesWallpaperWarning"
 
     private let defaults: UserDefaults
 
@@ -36,6 +37,11 @@ public final class Preferences {
     public var screensWithoutNotchEnabled: Bool {
         get { defaults.bool(forKey: Self.screensWithoutNotchEnabledKey) }
         set { defaults.set(newValue, forKey: Self.screensWithoutNotchEnabledKey) }
+    }
+
+    public var hidesWallpaperWarning: Bool {
+        get { defaults.bool(forKey: Self.hidesWallpaperWarningKey) }
+        set { defaults.set(newValue, forKey: Self.hidesWallpaperWarningKey) }
     }
 
     public var didSetUpLoginItem: Bool {

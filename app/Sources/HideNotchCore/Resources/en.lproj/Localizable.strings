@@ -19,3 +19,5 @@
 "panel.update" = "Update";
 "hint.hideNotch" = "Hej! Click here to hide your notch.";
 "menu.checkForUpdates" = "Check for Updates…";
+"panel.animatedWallpaper" = "Your wallpaper is animated, so HideNotch can’t paint the bar into it. With 10 or more windows at the top of the screen, macOS then shows the wallpaper instead of the black bar. Choose a still or dynamic wallpaper to keep it black.";
+"warning.dontShowAgain" = "Don’t Show Again";

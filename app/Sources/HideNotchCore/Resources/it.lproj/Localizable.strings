@@ -19,3 +19,5 @@
 "panel.update" = "Aggiorna";
 "hint.hideNotch" = "Hej! Fai clic qui per nascondere il notch.";
 "menu.checkForUpdates" = "Controlla aggiornamenti…";
+"panel.animatedWallpaper" = "Il tuo sfondo è animato, quindi HideNotch non può dipingervi la barra. Con 10 o più finestre nella parte superiore dello schermo, macOS mostra allora lo sfondo invece della barra nera. Scegli uno sfondo fisso o dinamico per mantenerla nera.";
+"warning.dontShowAgain" = "Non mostrare più";

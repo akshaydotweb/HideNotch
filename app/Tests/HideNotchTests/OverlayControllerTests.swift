@@ -30,6 +30,17 @@ struct OverlayControllerTests {
         OverlayController(screens: screens, makeWindow: factory.make)
     }
 
+    @Test func crowdingFadesTheBarOnlyOnCrowdedScreens() {
+        screens.list = [Screens.notched, Screens.external]
+        let controller = makeController()
+        controller.screensWithoutNotchEnabled = true
+        controller.isEnabled = true
+        controller.updateCrowding { $0 == Screens.external.frame }
+        #expect(factory.made.map(\.isBarVisible) == [true, false])
+        controller.updateCrowding { _ in false }
+        #expect(factory.made.map(\.isBarVisible) == [true, true])
+    }
+
     @Test func newControllerIsDisabled() {
         screens.list = [Screens.notched]
         let controller = makeController()

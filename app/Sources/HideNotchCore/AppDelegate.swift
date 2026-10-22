@@ -6,6 +6,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     private let overlay = OverlayController(screens: SystemScreens(), makeWindow: { ScreenMask() },
                                             onEnable: { MenuBarBackground.disable() })
     private let updates = Updater()
+    private let wallpaper = WallpaperPainter()
     private var statusController: StatusItemController?
     private var menuBarBackgroundMonitor: Timer?
 
@@ -14,10 +15,6 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     public func applicationDidFinishLaunching(_ notification: Notification) {
-        overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
-        overlay.screensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
-        overlay.isEnabled = preferences.overlayEnabled
-
         // The "…" menu's shortcuts only work while it is open; the main menu handles them while the panel is key.
         let appMenu = NSMenu()
         appMenu.addItem(withTitle: L10n.quit, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
@@ -27,8 +24,10 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApplication.shared.mainMenu?.addItem(appMenuItem)
 
         let status = StatusItemController(preferences: preferences, overlay: overlay, loginItem: SystemLoginItem(),
-                                          updates: updates)
+                                          updates: updates,
+                                          paintWallpaper: { [wallpaper] in wallpaper.sync($0, completion: $1) })
         status.install()
+        status.applyPreferences()
         status.enableLoginItemOnFirstLaunch()
         status.checkIconVisibility()
         status.showHint()
@@ -38,11 +37,10 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         // SkyLight's private notification does not reliably arrive across processes.
         // Read the setting while enabled rather than overriding a user's later change.
         menuBarBackgroundMonitor = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated {
-                guard let self, self.overlay.isEnabled, MenuBarBackground.isEnabled == true else { return }
-                self.statusController?.disableOverlayForSystemBackground()
-            }
+            MainActor.assumeIsolated { self?.monitor() }
         }
+        // Lets macOS batch the wakeups with other timers.
+        menuBarBackgroundMonitor?.tolerance = 0.5
         if let menuBarBackgroundMonitor {
             RunLoop.main.add(menuBarBackgroundMonitor, forMode: .common)
         }
@@ -74,6 +72,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
                                 name: Notification.Name("com.apple.screenIsUnlocked"), object: nil)
     }
 
+    /// Runs every second: catches wallpaper changes, crowded menu bars, and the system menu bar background.
+    private func monitor() {
+        statusController?.syncWallpaper()
+        let frames = overlay.isEnabled ? overlay.windows.map(\.frame) : []
+        let crowded = MenuBarCrowding.crowded(frames)
+        overlay.updateCrowding { frame in zip(frames, crowded).first { $0.0 == frame }?.1 ?? false }
+        statusController?.updateWallpaperWarning(crowded: crowded.contains(true))
+        guard overlay.isEnabled, MenuBarBackground.isEnabled == true else { return }
+        statusController?.disableOverlayForSystemBackground()
+    }
+
     public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         statusController?.restoreMenuBarIcon()
         statusController?.checkIconVisibility()
@@ -83,9 +92,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     public func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         // Start after returning terminateLater, so even an immediate completion can reply safely.
         Task { @MainActor in
-            overlay.isEnabled = false
-            overlay.hideAll {
-                sender.reply(toApplicationShouldTerminate: true)
+            let hideOverlay: @MainActor () -> Void = { [overlay] in
+                overlay.isEnabled = false
+                overlay.hideAll {
+                    sender.reply(toApplicationShouldTerminate: true)
+                }
+            }
+            // The original wallpapers go back first, so the overlay's animation shows against them.
+            if let statusController {
+                statusController.restoreWallpaper(completion: hideOverlay)
+            } else {
+                hideOverlay()
             }
         }
         return .terminateLater
@@ -116,10 +133,12 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func layoutChanged(_ notification: Notification) {
         overlay.refresh()
+        statusController?.syncWallpaper()
         // Screens may not have settled yet (e.g. right after wake); refresh again shortly after.
         Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(1))
             self?.overlay.refresh()
+            self?.statusController?.syncWallpaper()
         }
     }
 }

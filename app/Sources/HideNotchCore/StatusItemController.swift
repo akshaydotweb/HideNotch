@@ -14,17 +14,32 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     @ObservationIgnored private let confirmHidingIcon: @MainActor () -> Bool
     @ObservationIgnored private let informSystemBackground: @MainActor () -> Void
     @ObservationIgnored private let informDisallowedIcon: @MainActor () -> Void
+    /// Syncs the wallpapers and returns their state. Calls the completion later, once the changes show.
+    @ObservationIgnored private let paintWallpaper: @MainActor (WallpaperTarget, @escaping @MainActor () -> Void)
+        -> WallpaperState
+    @ObservationIgnored private var wallpaperTarget = WallpaperTarget()
+    /// Counts transitions, so a superseded one stops before parking the overlay.
+    @ObservationIgnored private var transition = 0
+    @ObservationIgnored private var isTransitioning = false
     @ObservationIgnored private(set) var statusItem: NSStatusItem?
     @ObservationIgnored let popover = NSPopover()
     @ObservationIgnored private let hint = NSPopover()
     @ObservationIgnored private var outsideClickMonitor: Any?
     @ObservationIgnored private var hintClickMonitor: Any?
+    @ObservationIgnored private let warning = NSPopover()
+    @ObservationIgnored private var warningClickMonitor: Any?
+    @ObservationIgnored private var wasWarning = false
+    @ObservationIgnored private var hidesWarningThisSession = false
+    /// Keeps a hidden icon visible while the warning points at it.
+    @ObservationIgnored private var showsIconForWarning = false
     @ObservationIgnored let updates: Updater
     private var loginItemFailed = false
 
     private(set) var isOverlayEnabled = false
     private(set) var isRoundedCornersEnabled = false
     private(set) var isScreensWithoutNotchEnabled = false
+    private(set) var isWallpaperPaintable = true
+    private(set) var isMenuBarCrowded = false
     private(set) var isMenuBarIconShown = false
     private(set) var isLaunchAtLoginEnabled = false
     private(set) var launchAtLoginTitle = L10n.launchAtLogin
@@ -34,7 +49,12 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         updates: Updater = Updater(),
         confirmHidingIcon: @escaping @MainActor () -> Bool = StatusItemController.explainHiddenIcon,
         informSystemBackground: @escaping @MainActor () -> Void = StatusItemController.explainSystemBackground,
-        informDisallowedIcon: @escaping @MainActor () -> Void = StatusItemController.explainDisallowedIcon
+        informDisallowedIcon: @escaping @MainActor () -> Void = StatusItemController.explainDisallowedIcon,
+        paintWallpaper: @escaping @MainActor (WallpaperTarget, @escaping @MainActor () -> Void)
+            -> WallpaperState = {
+            $1()
+            return WallpaperState(paintable: true, settled: true)
+        }
     ) {
         self.preferences = preferences
         self.overlay = overlay
@@ -43,6 +63,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         self.confirmHidingIcon = confirmHidingIcon
         self.informSystemBackground = informSystemBackground
         self.informDisallowedIcon = informDisallowedIcon
+        self.paintWallpaper = paintWallpaper
         super.init()
 
         popover.behavior = .transient
@@ -55,6 +76,19 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         let hintContent = NSHostingController(rootView: HintView { [weak self] in self?.togglePopover() })
         hintContent.sizingOptions = .preferredContentSize
         hint.contentViewController = hintContent
+
+        warning.behavior = .applicationDefined
+        let warningContent = NSHostingController(rootView: WarningView(
+            dismiss: { [weak self] in
+                self?.hidesWarningThisSession = true
+                self?.closeWarning()
+            },
+            dismissForever: { [weak self] in
+                self?.preferences.hidesWallpaperWarning = true
+                self?.closeWarning()
+            }))
+        warningContent.sizingOptions = .preferredContentSize
+        warning.contentViewController = warningContent
         syncState()
     }
 
@@ -69,6 +103,7 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
 
     @objc private func togglePopover() {
         closeHint()
+        closeWarning()
         guard let button = statusItem?.button else { return }
         if popover.isShown {
             popover.performClose(nil)
@@ -107,6 +142,40 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         }
     }
 
+    /// Points out, once per occurrence, that an animated wallpaper is showing instead of the black bar.
+    public func updateWallpaperWarning(crowded: Bool) {
+        let warns = overlay.isEnabled && !isWallpaperPaintable && crowded
+        defer { wasWarning = warns }
+        if !warns && warning.isShown { closeWarning() }
+        guard warns, !wasWarning, !preferences.hidesWallpaperWarning, !hidesWarningThisSession,
+              !popover.isShown, !warning.isShown, let statusItem else { return }
+        closeHint()
+        let revealsIcon = !statusItem.isVisible
+        showsIconForWarning = true
+        syncState()
+        Task { @MainActor [weak self] in
+            // Give a revealed icon time to appear before anchoring the warning to it.
+            if revealsIcon { try? await Task.sleep(for: .milliseconds(300)) }
+            guard let self, let button = statusItem.button, self.wasWarning else {
+                self?.showsIconForWarning = false
+                self?.syncState()
+                return
+            }
+            self.warning.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            self.warningClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+                MainActor.assumeIsolated { self?.closeWarning() }
+            }
+        }
+    }
+
+    private func closeWarning() {
+        warning.close()
+        if let warningClickMonitor { NSEvent.removeMonitor(warningClickMonitor) }
+        warningClickMonitor = nil
+        showsIconForWarning = false
+        syncState()
+    }
+
     private func closeHint() {
         hint.close()
         if let hintClickMonitor { NSEvent.removeMonitor(hintClickMonitor) }
@@ -115,14 +184,83 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
 
     func toggleRoundedCorners() {
         preferences.roundedCornersEnabled.toggle()
-        overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
-        syncState()
+        applyPreferences(addingBlack: preferences.roundedCornersEnabled)
     }
 
     func toggleScreensWithoutNotch() {
         preferences.screensWithoutNotchEnabled.toggle()
+        applyPreferences(addingBlack: preferences.screensWithoutNotchEnabled)
+    }
+
+    /// Keeps the overlay's animations visible against the plain wallpaper: black goes onto the wallpaper
+    /// only after the overlay has animated in, and comes off it before the overlay animates out.
+    /// In between, the overlay steps aside while a painted wallpaper shows the same black.
+    public func applyPreferences(addingBlack: Bool = true) {
+        transition += 1
+        let current = transition
+        isTransitioning = true
+        overlay.isParked = false
+        let afterAnimation = { [weak self] (next: @escaping @MainActor () -> Void) in
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(ScreenMaskAnimation.transitionDuration))
+                guard self?.transition == current else { return }
+                next()
+            }
+        }
+        let finish: @MainActor () -> Void = { [weak self] in
+            guard let self, self.transition == current else { return }
+            self.isTransitioning = false
+            self.parkOverlayIfCovered()
+        }
+        if addingBlack {
+            applyOverlayPreferences()
+            afterAnimation { [weak self] in self?.applyWallpaperPreferences(completion: finish) }
+        } else {
+            applyWallpaperPreferences { [weak self] in
+                guard let self, self.transition == current else { return }
+                self.applyOverlayPreferences()
+                afterAnimation(finish)
+            }
+        }
+    }
+
+    private func applyOverlayPreferences() {
+        overlay.roundedCornersEnabled = preferences.roundedCornersEnabled
         overlay.screensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
+        overlay.isEnabled = preferences.overlayEnabled
         syncState()
+    }
+
+    private func applyWallpaperPreferences(completion: @escaping @MainActor () -> Void = {}) {
+        wallpaperTarget = WallpaperTarget(
+            active: preferences.overlayEnabled,
+            includingScreensWithoutNotch: preferences.screensWithoutNotchEnabled,
+            roundedCorners: preferences.roundedCornersEnabled)
+        isWallpaperPaintable = paintWallpaper(wallpaperTarget, completion).paintable
+    }
+
+    /// Brings the wallpapers in line again, for example after the user picked a new one. The overlay
+    /// covers the screens until the new wallpaper shows the black.
+    public func syncWallpaper() {
+        let state = paintWallpaper(wallpaperTarget) { [weak self] in self?.parkOverlayIfCovered() }
+        isWallpaperPaintable = state.paintable
+        if !isTransitioning && !(state.paintable && state.settled) {
+            overlay.isParked = false
+        }
+    }
+
+    private func parkOverlayIfCovered() {
+        guard !isTransitioning else { return }
+        overlay.isParked = wallpaperTarget.active && isWallpaperPaintable
+    }
+
+    /// Puts the original wallpapers back, for quitting.
+    public func restoreWallpaper(completion: @escaping @MainActor () -> Void) {
+        transition += 1
+        isTransitioning = true
+        overlay.isParked = false
+        wallpaperTarget.active = false
+        _ = paintWallpaper(wallpaperTarget, completion)
     }
 
     func toggleMenuBarIcon() {
@@ -152,17 +290,17 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
     }
 
     func toggleOverlay() {
-        let enable = !preferences.overlayEnabled
-        preferences.overlayEnabled = enable
-        overlay.isEnabled = enable
-        syncState()
+        preferences.overlayEnabled.toggle()
+        applyPreferences(addingBlack: preferences.overlayEnabled)
     }
 
     /// Stops hiding the notch when the system background would cover the overlay.
     public func disableOverlayForSystemBackground() {
         guard overlay.isEnabled else { return }
         preferences.overlayEnabled = false
+        overlay.isParked = false
         overlay.disableImmediately()
+        applyWallpaperPreferences()
         restoreMenuBarIcon()
         informSystemBackground()
     }
@@ -247,8 +385,9 @@ public final class StatusItemController: NSObject, NSPopoverDelegate {
         isRoundedCornersEnabled = preferences.roundedCornersEnabled
         isScreensWithoutNotchEnabled = preferences.screensWithoutNotchEnabled
         isMenuBarIconShown = preferences.showMenuBarIcon
-        statusItem?.isVisible = preferences.showMenuBarIcon
+        statusItem?.isVisible = preferences.showMenuBarIcon || showsIconForWarning
         isLaunchAtLoginEnabled = loginItem.state == .enabled
+        isMenuBarCrowded = overlay.isEnabled && MenuBarCrowding.isCrowded(screens: overlay.windows.map(\.frame))
         if loginItemFailed {
             launchAtLoginTitle = L10n.launchAtLoginFailed
         } else if loginItem.state == .requiresApproval {

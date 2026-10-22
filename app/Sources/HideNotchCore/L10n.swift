@@ -6,7 +6,7 @@ public enum L10n {
     static let keys = [
         "menu.hideNotch", "menu.roundedScreenCorners", "menu.displaysWithoutNotch", "menu.launchAtLogin", "menu.launchAtLogin.failed",
         "menu.launchAtLogin.needsApproval", "menu.showMenuBarIcon", "menu.quit", "panel.description",
-        "panel.update", "hint.hideNotch", "menu.checkForUpdates",
+        "panel.update", "hint.hideNotch", "menu.checkForUpdates", "panel.animatedWallpaper", "warning.dontShowAgain",
         "alert.systemBackground.title", "alert.systemBackground.message",
         "alert.hiddenIcon.title", "alert.hiddenIcon.message", "alert.hiddenIcon.confirm", "alert.hiddenIcon.cancel",
         "alert.disallowedIcon.title", "alert.disallowedIcon.message", "alert.disallowedIcon.openSettings",
@@ -22,6 +22,8 @@ public enum L10n {
     static var showMenuBarIcon: String { tr("menu.showMenuBarIcon") }
     static var description: String { tr("panel.description") }
     static var update: String { tr("panel.update") }
+    static var animatedWallpaper: String { tr("panel.animatedWallpaper") }
+    static var dontShowAgain: String { tr("warning.dontShowAgain") }
     static var hint: String { tr("hint.hideNotch") }
     static var checkForUpdates: String { tr("menu.checkForUpdates") }
     static var systemBackgroundAlertTitle: String { tr("alert.systemBackground.title") }
