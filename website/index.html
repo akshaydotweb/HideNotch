@@ -11,6 +11,7 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./switch.ts"></script>
+    <script type="module" src="./copy.ts"></script>
   </head>
   <body class="overflow-x-clip bg-neutral-50 font-sans text-neutral-900 antialiased">
     <header class="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
@@ -185,9 +186,25 @@
           </li>
         </ol>
         <p class="mt-10 text-neutral-700">Or install it with Homebrew:</p>
-        <pre
-          class="mt-3 overflow-x-auto rounded-lg bg-neutral-900 px-4 py-3 text-sm text-neutral-100"
-        ><code>brew install --cask niklasravnsborg/tap/hidenotch</code></pre>
+        <div class="relative mt-3">
+          <pre
+            class="overflow-x-auto rounded-lg bg-neutral-900 py-3 pr-12 pl-4 text-sm text-neutral-100"
+          ><code>brew install --cask niklasravnsborg/tap/hidenotch</code></pre>
+          <button
+            type="button"
+            data-copy="brew install --cask niklasravnsborg/tap/hidenotch"
+            aria-label="Copy command"
+            class="group absolute inset-y-0 right-0 flex w-11 items-center justify-center text-neutral-400 hover:text-neutral-100"
+          >
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="size-4 group-data-copied:hidden">
+              <rect x="5.25" y="5.25" width="8.5" height="8.5" rx="1.5" />
+              <path d="M10.75 5.25V3.75a1.5 1.5 0 0 0-1.5-1.5h-5a1.5 1.5 0 0 0-1.5 1.5v5a1.5 1.5 0 0 0 1.5 1.5h1.5" />
+            </svg>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="hidden size-4 group-data-copied:block">
+              <path d="m3 8.5 3 3 7-7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
       </section>
     </main>
 
