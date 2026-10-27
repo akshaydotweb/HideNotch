@@ -1,6 +1,7 @@
 # Agent notes
 
-- `app/` is the Swift package for the macOS app. Run `swift test` from there.
+- `app/` is the Swift package for the macOS app. Run `swift test` from there. With only the Command Line Tools installed, pass `-Xswiftc -plugin-path -Xswiftc /Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing` so the Swift Testing macros load.
+- After a batch of app changes, run `scripts/build-app.sh`, quit HideNotch and reopen `~/Applications/HideNotch.app`. I test it by hand, so don't drive the UI unless asked.
 - `website/` is the landing page. Use bun there.
 
 ## Building
