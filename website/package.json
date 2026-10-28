@@ -15,5 +15,8 @@
   },
   "peerDependencies": {
     "typescript": "^7"
+  },
+  "dependencies": {
+    "@plausible-analytics/tracker": "^0.4.7"
   }
 }
