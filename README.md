@@ -1,5 +1,7 @@
 # HideNotch
 
+![HideNotch before and after: the notch on a MacBook menu bar, then the same menu bar painted black so the notch blends in](.github/readme.png)
+
 HideNotch paints the menu bar black on MacBooks with a notch, so the notch blends into the menu bar. It can also round the corners of your screen.
 
 ## Requirements
