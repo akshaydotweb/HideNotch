@@ -45,3 +45,5 @@ The "…" menu has launch at login, update checks, a link to the website, and an
 ## License
 
 See [LICENSE](LICENSE).
+
+The wallpaper in the screenshots is a photo by [Varun Yadav](https://unsplash.com/@vay2250) on [Unsplash](https://unsplash.com/photos/golden-gate-bridge-san-francisco-california-QhYTCG3CTeI).
