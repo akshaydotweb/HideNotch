@@ -11,3 +11,6 @@ if (!result.success) {
   for (const log of result.logs) console.error(log);
   process.exit(1);
 }
+
+// Link previews need a stable URL, so the OG image is copied without a content hash.
+await Bun.write("./dist/og.png", Bun.file("./og.png"));
